@@ -45,7 +45,7 @@ Renderer::Renderer() :
 	m_DataLoader = new  RenderDataLoader();
 
 	m_BasicShader = new SimpleShader(".\\shaders\\basic.vs.glsl", ".\\shaders\\basic.fs.glsl");
-	m_BasicTexture = new SimpleTexture(".\\res\\img\\sandplanet.png");
+	m_BasicTexture = new SimpleTexture(".\\res\\img\\perlin_sand.png");
 }
 
 Renderer::~Renderer()

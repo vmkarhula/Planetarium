@@ -20,6 +20,25 @@ namespace ErrorCallbacks {
 		const void* userParam);
 }
 
+namespace InputCallbacks {
+
+	// These static classes are used to forward the input into the actual app class as soon as the app is created
+	
+	// TODO: Consider if more than 5 buttons are necessary (mwheel, extra buttons?)
+	static void I_MouseButtonForwarder(GLFWwindow* window, int button, int action, int mods);
+	static void I_MousePositionForwarder(GLFWwindow* window, double xpos, double ypos);
+
+}
+
+namespace AppInfo {
+
+	// Outputs the OpenGL version, device and vendor info 
+	void PrintOpenGLInfo();
+
+	// Outputs input device info
+	void PrintInputDeviceInfo();
+
+}
 
 
 class PlanetariumApp {
@@ -30,6 +49,10 @@ public:
 
 	bool Init();
 	void Run();
+
+	// GLFW input is passed through these into the actual app
+	void I_MouseButton(GLFWwindow* window, int button, int action, int mods);
+	void I_MousePosition(GLFWwindow* window, double mouseX, double mouseY);
 
 private:
 

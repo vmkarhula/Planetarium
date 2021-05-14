@@ -11,8 +11,7 @@ PlanetariumApp::PlanetariumApp():
 
 }
 
-bool PlanetariumApp::Init()
-       {
+bool PlanetariumApp::Init(){
 
 	if (!glfwInit())
 		return false;
@@ -29,6 +28,9 @@ bool PlanetariumApp::Init()
     }
 
     m_MainScene = new Scene(Scene::Preset::basic, m_Renderer);
+
+    AppInfo::PrintOpenGLInfo();
+    AppInfo::PrintInputDeviceInfo();
 
     return true; 
 }
@@ -59,6 +61,15 @@ void PlanetariumApp::Run() {
 
 }
 
+void PlanetariumApp::I_MouseButton(GLFWwindow* window, int button, int action, int mods)
+{
+
+}
+
+void PlanetariumApp::I_MousePosition(GLFWwindow* window, double mouseX, double mouseY)
+{
+}
+
 
 
 void ErrorCallbacks::GLFW_ErrorCallback(int error, const char* description)
@@ -72,5 +83,50 @@ void GLAPIENTRY ErrorCallbacks::Callback_OpenGL_Error(GLenum source, GLenum type
         fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
             (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
             type, severity, message);
+    }
+}
+
+void AppInfo::PrintOpenGLInfo()
+{
+
+    const GLubyte* renderer = glGetString(GL_RENDERER);
+    const GLubyte* vendor = glGetString(GL_VENDOR);
+    const GLubyte* version = glGetString(GL_VERSION);
+    const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+    GLint major, minor;
+    glGetIntegerv(GL_MAJOR_VERSION, &major);
+    glGetIntegerv(GL_MINOR_VERSION, &minor);
+
+    printf("GL VENDOR:			%s\n", vendor);
+    printf("GL RENDERER:			%s\n", renderer);
+    printf("GL VERSION (string):		%s\n", version);
+    printf("GL VERSION (integer):		%i.%i\n", major, minor);
+    printf("GLSL VERSION:			%s\n", glslVersion);
+
+}
+
+void AppInfo::PrintInputDeviceInfo()
+{
+    if (glfwRawMouseMotionSupported() == GL_TRUE) {
+        printf("Raw mouse motion is supported!\n");
+    }
+}
+
+void InputCallbacks::I_MouseButtonForwarder(GLFWwindow* window, int button, int action, int mods)
+{
+    PlanetariumApp* app = reinterpret_cast<PlanetariumApp*>(glfwGetWindowUserPointer(window));
+    if (app) {
+
+        app->I_MouseButton(window, button, action, mods);
+    }
+}
+
+void InputCallbacks::I_MousePositionForwarder(GLFWwindow* window, double xpos, double ypos)
+{
+    PlanetariumApp* app = reinterpret_cast<PlanetariumApp*>(glfwGetWindowUserPointer(window));
+    if (app) {
+
+        app->I_MousePosition(window, xpos, ypos);
     }
 }

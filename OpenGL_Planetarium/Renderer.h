@@ -12,15 +12,26 @@
 
 #include <vector>
 #include <unordered_map>
-
+#include <cstddef>
 
 
 struct RenderRequest {
 		
 	glm::mat4 Transform;
 	GLuint RendererID;
+	std::byte Params[32]; 
+
 };
 
+
+struct LightInfo {
+
+	glm::vec3 Position;
+	glm::vec3 Ambient;
+	glm::vec3 Diffuse;
+	glm::vec3 Specular; 
+
+};
 
 using RenderQueue = std::vector<RenderRequest>;
 
