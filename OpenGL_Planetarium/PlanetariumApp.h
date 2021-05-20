@@ -6,6 +6,8 @@
 
 #include "Renderer.h"
 #include "Scene.h"
+#include "InputHandler.h"
+#include "Event.h"
 
 namespace ErrorCallbacks {
 
@@ -28,6 +30,8 @@ namespace InputCallbacks {
 	static void I_MouseButtonForwarder(GLFWwindow* window, int button, int action, int mods);
 	static void I_MousePositionForwarder(GLFWwindow* window, double xpos, double ypos);
 
+	static void I_KeyPressForwarder(GLFWwindow* window, int key, int scancode, int action, int mods);
+	
 }
 
 namespace AppInfo {
@@ -53,14 +57,21 @@ public:
 	// GLFW input is passed through these into the actual app
 	void I_MouseButton(GLFWwindow* window, int button, int action, int mods);
 	void I_MousePosition(GLFWwindow* window, double mouseX, double mouseY);
+	void I_KeyPress(GLFWwindow* window, int key, int scancode, int action, int mods);
+	
 
 private:
 
-	GLFWwindow* m_MainWindow;
-	Renderer*	m_Renderer;
-	
-	Scene*		m_MainScene;
+	EventQueue*		m_EventQueue;
 
-	double		m_PrevTick;
-	double		m_DeltaTime; 
+	GLFWwindow*		m_MainWindow;
+	Renderer*		m_Renderer;
+	
+	Scene*			m_MainScene;
+	InputHandler*	m_InputHandler;
+
+	double			m_PrevTick;
+	double			m_DeltaTime; 
+	
+
 };

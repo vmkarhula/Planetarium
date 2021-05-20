@@ -5,6 +5,8 @@
 
 #include "glm/glm.hpp"
 
+#include "Event.h"
+
 #include <vector>
 
 struct SceneObject {
@@ -38,10 +40,14 @@ public:
 	Scene operator=(const Scene& rhs) = delete;
 	Scene operator=(Scene&& rhs) = delete;
 	
-	void Update(float dt);
+	void Update(float dt, EventQueue* eq = nullptr);
 
 	// Fills the renderqueue
 	void GetRenderRequests(Renderer* renderer);
+
+private:
+
+	void ProcessEvent(Event e);
 
 private:
 

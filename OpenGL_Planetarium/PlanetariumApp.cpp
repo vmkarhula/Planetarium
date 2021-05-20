@@ -6,7 +6,11 @@
 PlanetariumApp::PlanetariumApp():
     m_Renderer(nullptr),
     m_MainWindow(nullptr),
-    m_MainScene(nullptr){
+    m_MainScene(nullptr),
+    m_InputHandler(nullptr),
+    m_EventQueue(nullptr),
+    m_DeltaTime(0.0),
+    m_PrevTick(0.0){
 
 
 }
@@ -28,9 +32,25 @@ bool PlanetariumApp::Init(){
     }
 
     m_MainScene = new Scene(Scene::Preset::basic, m_Renderer);
-
+    
     AppInfo::PrintOpenGLInfo();
     AppInfo::PrintInputDeviceInfo();
+
+
+    m_EventQueue = new EventQueue();
+
+    // Input setup
+    m_InputHandler = new InputHandler(m_EventQueue);
+
+    // User  pointer for forwarding input to the app class 
+    glfwSetWindowUserPointer(m_MainWindow, (void*)this);
+    
+    // Keyboard
+    glfwSetKeyCallback(m_MainWindow, InputCallbacks::I_KeyPressForwarder);
+    
+    // Mouse
+    glfwSetMouseButtonCallback(m_MainWindow, InputCallbacks::I_MouseButtonForwarder);
+    glfwSetCursorPosCallback(m_MainWindow, InputCallbacks::I_MousePositionForwarder);
 
     return true; 
 }
@@ -49,8 +69,7 @@ void PlanetariumApp::Run() {
         m_DeltaTime = currTick - m_PrevTick;
         m_PrevTick = currTick;
         m_MainScene->Update(m_DeltaTime);
-        
-
+    
         // Render
         m_Renderer->BeginFrame();
         m_MainScene->GetRenderRequests(m_Renderer);
@@ -63,11 +82,17 @@ void PlanetariumApp::Run() {
 
 void PlanetariumApp::I_MouseButton(GLFWwindow* window, int button, int action, int mods)
 {
-
+    m_InputHandler->RegisterMouseClick(window, button, action, mods);
 }
 
 void PlanetariumApp::I_MousePosition(GLFWwindow* window, double mouseX, double mouseY)
 {
+    m_InputHandler->RegisterMouseMove(window, mouseX, mouseY);
+}
+
+void PlanetariumApp::I_KeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    m_InputHandler->RegisterKeypress(window, key, scancode, action, mods);
 }
 
 
@@ -129,4 +154,14 @@ void InputCallbacks::I_MousePositionForwarder(GLFWwindow* window, double xpos, d
 
         app->I_MousePosition(window, xpos, ypos);
     }
+}
+
+void InputCallbacks::I_KeyPressForwarder(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    PlanetariumApp* app = reinterpret_cast<PlanetariumApp*>(glfwGetWindowUserPointer(window));
+    if (app) {
+
+        app->I_KeyPress(window, key, scancode, action, mods);
+    }
+
 }

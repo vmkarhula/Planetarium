@@ -23,8 +23,15 @@ Scene::~Scene()
 {
 };
 
-void Scene::Update(float dt)
+void Scene::Update(float dt, EventQueue* eq)
 {
+	if (eq) {
+
+		while (!eq->Empty())
+			ProcessEvent(eq->Pop());
+
+	}
+	
 	m_Objects[0].rotation.y += 2.0f * dt;
 	m_Objects[0].rotation.x += 2.0f * dt;
 
@@ -62,4 +69,8 @@ void Scene::GetRenderRequests(Renderer* renderer)
 		
 		renderer->AddToRenderQueue(RenderRequest{ model, obj.RenderTag });
 	}
+}
+
+void Scene::ProcessEvent(Event e)
+{
 }
