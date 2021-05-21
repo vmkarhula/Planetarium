@@ -29,6 +29,7 @@ namespace InputCallbacks {
 	// TODO: Consider if more than 5 buttons are necessary (mwheel, extra buttons?)
 	static void I_MouseButtonForwarder(GLFWwindow* window, int button, int action, int mods);
 	static void I_MousePositionForwarder(GLFWwindow* window, double xpos, double ypos);
+	static void I_MouseScrollForwarder(GLFWwindow* window, double xoffset, double yoffset);
 
 	static void I_KeyPressForwarder(GLFWwindow* window, int key, int scancode, int action, int mods);
 	
@@ -58,7 +59,7 @@ public:
 	void I_MouseButton(GLFWwindow* window, int button, int action, int mods);
 	void I_MousePosition(GLFWwindow* window, double mouseX, double mouseY);
 	void I_KeyPress(GLFWwindow* window, int key, int scancode, int action, int mods);
-	
+	void I_MouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 
 private:
 

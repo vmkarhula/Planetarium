@@ -12,10 +12,10 @@ Scene::Scene(Preset ps, Renderer* renderer) : m_DummyRotation(0.0f)
 		m_Objects.emplace_back(
 			SceneObject(glm::vec3(0.0f, 0.0f, 0.0f),
 				renderer->GetRenderTag(ObjectPreset::TexturedPlanet)));
-
+				
 		m_Objects.emplace_back(
 			SceneObject(glm::vec3(0.0f, 0.0f, 0.0f),
-				renderer->GetRenderTag(ObjectPreset::BasicSphere)));
+				renderer->GetRenderTag(ObjectPreset::ColorSphere)));
 
 	}
 }
@@ -73,4 +73,21 @@ void Scene::GetRenderRequests(Renderer* renderer)
 
 void Scene::ProcessEvent(Event e)
 {
+	switch (e.Type) {
+
+	case Event::EventType::MouseDrag: {
+
+		float x = e.p1;
+		float y = e.p2;
+
+		m_Camera.processMouseDrag(x, y);
+
+	} break;
+	
+	case Event::EventType::Scroll: {
+
+		m_Camera.AdjustRadius(e.p2);
+	} break;
+
+	}
 }

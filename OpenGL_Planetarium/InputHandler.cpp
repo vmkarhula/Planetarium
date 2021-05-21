@@ -70,11 +70,29 @@ void InputHandler::RegisterMouseMove(GLFWwindow* window, double xpos, double ypo
 		
 		Event e{};
 		
-		e.Type == Event::EventType::MouseDrag;
-		e.Parameters[0] = static_cast<std::byte>(xpos - m_PrevMousePos.x);
-		e.Parameters[4] = static_cast<std::byte>(ypos - m_PrevMousePos.y);
+		float x = xpos - m_PrevMousePos.x;
+		float y = ypos - m_PrevMousePos.y;
 
+		x /= 1000.0f;
+		y /= 1000.0f;
+
+		e.Type = Event::EventType::MouseDrag;
+		
+		e.p1 = x;
+		e.p2 = y;
+		
 		m_EventQueue->AddEvent(e);
 
 	}
+}
+
+void InputHandler::RegisterMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+	Event e; 
+
+	e.Type = Event::EventType::Scroll;
+	e.p1 = xoffset;
+	e.p2 = yoffset;
+	
+	m_EventQueue->AddEvent(e);
 }

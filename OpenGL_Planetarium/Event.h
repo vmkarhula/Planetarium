@@ -5,10 +5,11 @@
 
 struct Event {
 
-		enum class EventType { Pause, ScrollUp, ScrollDown, MouseDrag };
+		enum class EventType { Pause, Scroll, MouseDrag };
 
 		EventType Type;
-		std::byte  Parameters[16];
+		float p1;
+		float p2;
 
 };
 

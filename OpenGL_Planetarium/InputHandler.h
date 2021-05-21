@@ -14,6 +14,7 @@ public:
 	void RegisterKeypress(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void RegisterMouseClick(GLFWwindow* window, int button, int action, int mods);
 	void RegisterMouseMove(GLFWwindow* window, double xpos, double ypos);
+	void RegisterMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 
 private:
 

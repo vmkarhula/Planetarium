@@ -51,6 +51,7 @@ bool PlanetariumApp::Init(){
     // Mouse
     glfwSetMouseButtonCallback(m_MainWindow, InputCallbacks::I_MouseButtonForwarder);
     glfwSetCursorPosCallback(m_MainWindow, InputCallbacks::I_MousePositionForwarder);
+    glfwSetScrollCallback(m_MainWindow, InputCallbacks::I_MouseScrollForwarder);
 
     return true; 
 }
@@ -68,7 +69,7 @@ void PlanetariumApp::Run() {
         double currTick = glfwGetTime();
         m_DeltaTime = currTick - m_PrevTick;
         m_PrevTick = currTick;
-        m_MainScene->Update(m_DeltaTime);
+        m_MainScene->Update(m_DeltaTime, m_EventQueue);
     
         // Render
         m_Renderer->BeginFrame();
@@ -93,6 +94,11 @@ void PlanetariumApp::I_MousePosition(GLFWwindow* window, double mouseX, double m
 void PlanetariumApp::I_KeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     m_InputHandler->RegisterKeypress(window, key, scancode, action, mods);
+}
+
+void PlanetariumApp::I_MouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+    m_InputHandler->RegisterMouseScroll(window, xoffset, yoffset);
 }
 
 
@@ -153,6 +159,15 @@ void InputCallbacks::I_MousePositionForwarder(GLFWwindow* window, double xpos, d
     if (app) {
 
         app->I_MousePosition(window, xpos, ypos);
+    }
+}
+
+void InputCallbacks::I_MouseScrollForwarder(GLFWwindow* window, double xoffset, double yoffset)
+{
+    PlanetariumApp* app = reinterpret_cast<PlanetariumApp*>(glfwGetWindowUserPointer(window));
+    if (app) {
+
+        app->I_MouseScroll(window, xoffset, yoffset);
     }
 }
 
