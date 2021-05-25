@@ -13,6 +13,18 @@ The project uses GLFW for most of the OS abstaction, so ports to other platforms
 
 The external dependencies are included (and hopefully aknowledged accordingly) and the aim is to have project running without any additional library hunting or such. 
 
+## Features
+
+The project is heavily work in progress. The initial target is to get a nicely Phong-shaded solar system running with some planet variation. The camera operates based on solar centered polar coordinate system.
+
+> #### From that point on I'd love to have:
+>
+> - Particles, dust clouds
+> - More options for camera movement
+> - Animated texturing
+> - Screen space effects
+> - ect ect... 
+
 ## External Dependencies
 
 ### GLFW 
