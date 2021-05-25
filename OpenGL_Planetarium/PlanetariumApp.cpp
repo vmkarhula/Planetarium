@@ -12,8 +12,21 @@ PlanetariumApp::PlanetariumApp():
     m_DeltaTime(0.0),
     m_PrevTick(0.0){
 
-
 }
+
+// TODO: Move to smart pointers where ever appropriate
+PlanetariumApp::~PlanetariumApp()
+{
+    if(m_Renderer)
+        delete(m_Renderer);
+    
+    if(m_MainScene)
+        delete(m_MainScene);
+
+    if (m_MainWindow)
+        glfwDestroyWindow(m_MainWindow);
+}
+
 
 bool PlanetariumApp::Init(){
 
@@ -28,7 +41,7 @@ bool PlanetariumApp::Init(){
    
     if (!m_MainWindow) {
 
-        std::cerr << "Error, GLFW WIndow handle could not be acquired! \n";
+        std::cerr << "Error, GLFW Window handle could not be acquired! \n";
     }
 
     m_MainScene = new Scene(Scene::Preset::basic, m_Renderer);
@@ -117,6 +130,7 @@ void GLAPIENTRY ErrorCallbacks::Callback_OpenGL_Error(GLenum source, GLenum type
     }
 }
 
+// This is mostly borrowed from the OpenGL Shader Cookbook by David Wolff
 void AppInfo::PrintOpenGLInfo()
 {
 
@@ -137,12 +151,19 @@ void AppInfo::PrintOpenGLInfo()
 
 }
 
+
 void AppInfo::PrintInputDeviceInfo()
 {
     if (glfwRawMouseMotionSupported() == GL_TRUE) {
         printf("Raw mouse motion is supported!\n");
     }
 }
+
+
+// Input callbacks use window user pointer to receiver the app instance memory address
+// and then use the API to pass the input info. 
+// This trick is fairly standard in windows enviroment at least, as far as I can tell. 
+// Here GLFW provides a bit more OS agnostic version of the window user pointer implementation.  
 
 void InputCallbacks::I_MouseButtonForwarder(GLFWwindow* window, int button, int action, int mods)
 {

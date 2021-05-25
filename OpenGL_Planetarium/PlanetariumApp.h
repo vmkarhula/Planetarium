@@ -41,7 +41,7 @@ namespace AppInfo {
 	// Outputs the OpenGL version, device and vendor info 
 	void PrintOpenGLInfo();
 
-	// Outputs input device info
+	// Outputs input device info (mouse & keyboard mostly)
 	void PrintInputDeviceInfo();
 
 }
@@ -51,10 +51,16 @@ namespace AppInfo {
 class PlanetariumApp {
 
 public:
-
+	
+	// Creates an empty instance
 	PlanetariumApp();
+	
+	~PlanetariumApp();
 
+	// Initializes OpenGL, GLFW Window and Input systems and initializes a scene.  
 	bool Init();
+	
+	// Once all is set, runs the loaded setup. 
 	void Run();
 
 	// GLFW input is passed through these into the actual app
@@ -65,8 +71,6 @@ public:
 
 private:
 
-	EventQueue*		m_EventQueue;
-
 	// GLFW window is a bit of a tricky multipurpose entity. It's currently co-owned by renderer
 	// and app classes. It might be worth figuring out a clean smart pointer ownership system,
 	// but for now we'll just go with a raw pointers. 
@@ -75,7 +79,7 @@ private:
 	// The rest could be updated to unique ptrs, but the ownership and lifetime are
 	// quite clearly tied to the app lifetime anyway. 
 	Renderer*		m_Renderer;
-	
+	EventQueue*		m_EventQueue;
 	Scene*			m_MainScene;
 	InputHandler*	m_InputHandler;
 

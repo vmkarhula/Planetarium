@@ -9,6 +9,13 @@
 
 #include <vector>
 
+
+/*	
+	Scene is the actual simulation of the objects and their relations
+	Once per frame it fills the renderqueue that'll then get renderered by the
+	renderer 
+*/
+
 struct SceneObject {
 
 	SceneObject(glm::vec3 position_, unsigned int rendertag_):

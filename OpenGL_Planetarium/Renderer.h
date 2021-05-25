@@ -15,6 +15,22 @@
 #include <cstddef>
 
 
+/*	
+	The renderer processes render requests into actual 3D render
+	Renderable objects are abstracted into rendertags to the outside
+*/
+
+/* 
+	RenderRequest is submitted to the renderqueue. 
+	
+	For now, the params is a crude way to submitting varied parameter data
+	in one unified data structure. The aim is to avoid having heap allocated
+	render requests that'll reduce cache performance and in general run slow with
+	all the pointer chasing and such. 
+
+	The performance isn't likely going to bite too hard in a while, but I still felt
+	like experimenting a bit with more data oriented approach for the sake of learning.
+*/
 struct RenderRequest {
 		
 	glm::mat4 Transform;
@@ -43,6 +59,7 @@ public:
 	Renderer();
 	~Renderer();
 
+	// No copy or assigment
 	Renderer(const Renderer& rhs) = delete;
 	Renderer(Renderer&& rhs) = delete;
 	Renderer operator=(const Renderer& rhs) = delete;
@@ -83,6 +100,8 @@ private:
 	TagMap			m_TagMap;
 	RenderDataMap	m_RenderDataMap;
 	
+	// These are usually duplicated from the scene camera, but it's probably better 
+	// to avoid querying a separate memory location throughout the frame render process
 	glm::vec3		m_CameraPos;
 	glm::vec3		m_CameraUp;
 

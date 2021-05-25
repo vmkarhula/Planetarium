@@ -8,6 +8,15 @@
 #include <unordered_map>
 #include <string>
 
+/* RenderDataLoader is a database for vertexdata and shaders that the program has loaded or can load
+*  The aim is to abstract away as much of the loading process from the renderer itself and to avoid loading duplicated
+*  instances of meshes or shaders whenever possible. 
+* 
+*  As it stands, it's a constantly work in progress as more renderer features and more complex mixes of render
+*  elements are added. At some point a proper rewrite is probably necessary to reduce clutter.
+* 
+*  The plan is to bring in some XML definitions to reduce the clutter on C++ side of things. 
+*/
 
 class SimpleShader;
 class SimpleTexture;

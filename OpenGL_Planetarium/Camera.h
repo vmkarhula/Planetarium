@@ -2,6 +2,8 @@
 
 #include "glm/glm.hpp"
 
+// Camera class. Provides information on the viewpoint inside a scene. 
+
 class Camera {
 
 public:
@@ -24,6 +26,7 @@ public:
 
 private:
 
+	// Support for orbitin camera with polar coordinates
 	void CalculateOrbitalCoords();
 
 private:

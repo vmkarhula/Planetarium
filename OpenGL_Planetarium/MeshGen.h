@@ -3,16 +3,26 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 
-
-
 #include <unordered_map>
 
+
+/* MeshGen provides various - mostly mathematically generated - meshes for the use in Planetarium.
+* At this point Meshes are returned as VAO and IndexCount pairs, which is sufficient for the geometry
+* as long as paired with a correct shader elsewhere. 
+* 
+* A lot of the code here is based on Frank Luna's DirectX11 book and then converted to OpenGL/glm-environment
+* 
+*/
+
+// Using vertex array objects, this is probably all the abstraction we'll need for the
+// mesh geometry itself. 
 struct MeshDefinition {
 
 	GLuint VAO;
 	GLuint IndexCount;
 };
 
+// This is a general purpose vertex struct, converted directly from Frank Luna's Dx11 book examples to OpenGL & GLM. 
 struct VertexUV {
 
 	VertexUV() {}
@@ -64,7 +74,8 @@ struct MeshDataRGB {
 
 };
 
-
+// A collection of mesh generation functions. 
+// TODO: Cleanup on obsolete methods necessary at some point. 
 namespace MeshGen {
 
 	enum class Shape { Cube, Sphere };
@@ -77,13 +88,18 @@ namespace MeshGen {
 	MeshDefinition CreateBasicSphere();
 	MeshDefinition CreateColorSphere();
 	MeshDefinition CreateTexturedPlanet();
+	
+	// Sun has a bit of a different shading and for now, a bit different mesh data. 
 	MeshDefinition CreateSun();
 
 	GLuint CreateSphere();
 
+	// A OpenGL / GLM Version of Frank Luna's Geosphere generation
+	// Creates a sphere with nice vertex distribution for clean shading results. 
 	MeshDataUV CreateGeosphere(float radius, GLuint numSubDivisions);
 	
-	// Subdivide into a higher vertex count using Catmull-Clark subdivision
+	// Subdivide into a higher vertex count using Catmull-Clark subdivision. Used mostly by
+	// the geosphere, although could be serviceable elsewhere also.  
 	void Subdivide(MeshDataUV& meshData);
 
 
