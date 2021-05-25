@@ -22,6 +22,9 @@ The project is heavily work in progress. The initial target is to get a nicely P
  - More options for camera movement
  - Animated texturing
  - Screen space effects
+ - Model loading for rockets, satellites and such. NASA has some sweet free-to-use 3D models that could be added.
+ - "Skybox" for space background or even for more experimental enviroments. 
+ - General visual improvements.  
  - ect ect... 
 
 ## External Dependencies
