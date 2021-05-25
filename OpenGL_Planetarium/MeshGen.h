@@ -77,6 +77,7 @@ namespace MeshGen {
 	MeshDefinition CreateBasicSphere();
 	MeshDefinition CreateColorSphere();
 	MeshDefinition CreateTexturedPlanet();
+	MeshDefinition CreateSun();
 
 	GLuint CreateSphere();
 

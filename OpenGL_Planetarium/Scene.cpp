@@ -11,11 +11,11 @@ Scene::Scene(Preset ps, Renderer* renderer) : m_DummyRotation(0.0f)
 				
 		m_Objects.emplace_back(
 			SceneObject(glm::vec3(0.0f, 0.0f, 0.0f),
-				renderer->GetRenderTag(ObjectPreset::TexturedPlanet)));
+				renderer->GetRenderTag(ObjectPreset::SandPlanet)));
 				
 		m_Objects.emplace_back(
 			SceneObject(glm::vec3(0.0f, 0.0f, 0.0f),
-				renderer->GetRenderTag(ObjectPreset::ColorSphere)));
+				renderer->GetRenderTag(ObjectPreset::Sun)));
 
 	}
 }

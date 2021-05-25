@@ -8,6 +8,9 @@ class SimpleTexture {
 
 public:
 
+	enum class Preset{DUMMY_WHITE};
+	
+	SimpleTexture(Preset ps);
 	SimpleTexture(std::string filepath);
 	~SimpleTexture();
 

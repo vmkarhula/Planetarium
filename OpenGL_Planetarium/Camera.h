@@ -14,8 +14,8 @@ public:
 
 
 	void AdjustRadius(float change); 
-	void AdjustTheta(float change) { m_Theta += change; CalculateOrbitalCoords();}
-	void AdjustPhi(float change) { m_Phi += change; CalculateOrbitalCoords();}
+	//void AdjustTheta(float change) { m_Theta += change; CalculateOrbitalCoords();}
+	//void AdjustPhi(float change) { m_Phi += change; CalculateOrbitalCoords();}
 
 	void SetPos(glm::vec3 pos) { m_Position = pos; }
 	//void SetTarget(glm::vec3 target);

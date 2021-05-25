@@ -11,7 +11,7 @@ in (location=3) vec2 TexC;
 
 out (location=0) vec3 voutTexCoord;
 out (location=1) vec3 voutTangentU;
-out (location=2) vec3 vout
+out (location=2) vec3 vout ;
 
 /* 
 	glm::vec3 Position;

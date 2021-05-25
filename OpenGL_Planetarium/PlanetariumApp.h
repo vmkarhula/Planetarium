@@ -9,6 +9,7 @@
 #include "InputHandler.h"
 #include "Event.h"
 
+// Callback functions for GLFW and OpenGL errors
 namespace ErrorCallbacks {
 
 	void GLFW_ErrorCallback(int error, const char* description);
@@ -22,11 +23,10 @@ namespace ErrorCallbacks {
 		const void* userParam);
 }
 
+
+// Since member functions aren't viable as callbacks, these input callbacks are used to forward the input information inside the class once the app class is ready to receive input.
 namespace InputCallbacks {
 
-	// These static classes are used to forward the input into the actual app class as soon as the app is created
-	
-	// TODO: Consider if more than 5 buttons are necessary (mwheel, extra buttons?)
 	static void I_MouseButtonForwarder(GLFWwindow* window, int button, int action, int mods);
 	static void I_MousePositionForwarder(GLFWwindow* window, double xpos, double ypos);
 	static void I_MouseScrollForwarder(GLFWwindow* window, double xoffset, double yoffset);
@@ -35,6 +35,7 @@ namespace InputCallbacks {
 	
 }
 
+// Misc information prints
 namespace AppInfo {
 
 	// Outputs the OpenGL version, device and vendor info 
@@ -45,7 +46,8 @@ namespace AppInfo {
 
 }
 
-
+// The main app class. After the initial constructor and Init
+// and Run calls, the interface gets called mostly for input handling. 
 class PlanetariumApp {
 
 public:
@@ -65,12 +67,19 @@ private:
 
 	EventQueue*		m_EventQueue;
 
+	// GLFW window is a bit of a tricky multipurpose entity. It's currently co-owned by renderer
+	// and app classes. It might be worth figuring out a clean smart pointer ownership system,
+	// but for now we'll just go with a raw pointers. 
 	GLFWwindow*		m_MainWindow;
+	
+	// The rest could be updated to unique ptrs, but the ownership and lifetime are
+	// quite clearly tied to the app lifetime anyway. 
 	Renderer*		m_Renderer;
 	
 	Scene*			m_MainScene;
 	InputHandler*	m_InputHandler;
 
+	// Time management. For now, there's no need to complicate this with a separate class or so. 
 	double			m_PrevTick;
 	double			m_DeltaTime; 
 	

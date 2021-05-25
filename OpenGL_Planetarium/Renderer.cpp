@@ -15,8 +15,9 @@ Renderer::Renderer() :
 	m_TagIndex(0),
 	m_View(),
 	m_BasicShader(nullptr),
-	m_BasicTexture(nullptr),
-	m_DataLoader(nullptr)
+	m_DummyTexture(nullptr),
+	m_DataLoader(nullptr),
+	m_ViewProj()
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -45,7 +46,8 @@ Renderer::Renderer() :
 	m_DataLoader = new  RenderDataLoader();
 
 	m_BasicShader = new SimpleShader(".\\shaders\\basic.vs.glsl", ".\\shaders\\basic.fs.glsl");
-	m_BasicTexture = new SimpleTexture(".\\res\\img\\perlin_sand.png");
+	//m_BasicTexture = new SimpleTexture(".\\res\\img\\perlin_sand.png");
+	m_DummyTexture = new SimpleTexture(SimpleTexture::Preset::DUMMY_WHITE);
 }
 
 Renderer::~Renderer()
@@ -114,12 +116,14 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 	RenderData rd = m_RenderDataMap[rr.RendererID];
 
 	glActiveTexture(GL_TEXTURE0);
-	m_BasicTexture->Bind();
+	
+	rd.MatData.Texture->Bind();
+	//m_DummyTexture->Bind();
 
 	glBindVertexArray(rd.VAO);
-	rd.Shader->Bind();
-	rd.Shader->SetUniformMat4("viewproj", m_ViewProj);
-	rd.Shader->SetUniformMat4("model", rr.Transform);
+	rd.MatData.Shader->Bind();
+	rd.MatData.Shader->SetUniformMat4("viewproj", m_ViewProj);
+	rd.MatData.Shader->SetUniformMat4("model", rr.Transform);
 
 	glDrawElements(GL_TRIANGLES, rd.IndexCount, GL_UNSIGNED_INT, 0);
 

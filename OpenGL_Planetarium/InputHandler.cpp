@@ -73,8 +73,8 @@ void InputHandler::RegisterMouseMove(GLFWwindow* window, double xpos, double ypo
 		float x = xpos - m_PrevMousePos.x;
 		float y = ypos - m_PrevMousePos.y;
 
-		x /= 1000.0f;
-		y /= 1000.0f;
+		x /= 2500.0f;
+		y /= 2500.0f;
 
 		e.Type = Event::EventType::MouseDrag;
 		

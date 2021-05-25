@@ -460,9 +460,65 @@ MeshDefinition MeshGen::CreateTexturedPlanet()
 	return md;
 }
 
+MeshDefinition MeshGen::CreateSun()
+{
+	MeshDataUV md = CreateGeosphere(1.0f, 4);
+	
+	GLuint VAO = 0;
+
+	if (!GLHelpers::CreateVAO(VAO)) {
+
+		return MeshDefinition{ 0, 0 };
+	}
+
+	GLuint VB = 0;
+
+	if (!GLHelpers::CreateBuffer(VB)) {
+
+		return MeshDefinition{ 0, 0 };
+	}
+
+	GLuint IB = 0;
+
+	if (!GLHelpers::CreateBuffer(IB)) {
+
+		return MeshDefinition{ 0, 0 };
+	}
+	
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VB);
+
+	glBufferData(GL_ARRAY_BUFFER, md.Vertices.size() * sizeof(VertexUV), md.Vertices.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(glm::vec3) + sizeof(glm::vec2), (const void*)(0));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(glm::vec3) + sizeof(glm::vec2), (const void*)(3*sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(glm::vec3) + sizeof(glm::vec2), (const void*)(6*sizeof(float)));
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(glm::vec3) + sizeof(glm::vec2), (const void*)(9*sizeof(float)));
+	
+	glEnableVertexArrayAttrib(VAO, 0);
+	glEnableVertexArrayAttrib(VAO, 1);
+	glEnableVertexArrayAttrib(VAO, 2);
+	glEnableVertexArrayAttrib(VAO, 3);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md.Indices.size() * sizeof(GLuint), md.Indices.data(), GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	
+	MeshDefinition mdef{};
+
+	mdef.VAO = VAO;
+	mdef.IndexCount = md.Indices.size();
+
+	return mdef;
+
+}
+
 MeshDataUV MeshGen::CreateGeosphere(float radius, GLuint numSubDivisions) {
 
-	// Algorithm borrowed from Frank Luna's DX11 book. 
+	// Algorhitm borrowed from Frank Luna's DX11 book. 
 	numSubDivisions = std::min(numSubDivisions, 5u);
 
 	const float X = 0.525731f;

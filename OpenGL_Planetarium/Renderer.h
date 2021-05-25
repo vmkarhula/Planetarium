@@ -94,7 +94,10 @@ private:
 	float			m_AspectRatio;
 
 	SimpleShader*	m_BasicShader;
-	SimpleTexture*	m_BasicTexture;
+	
+	// Dummy white 1x1 texture. Can be useful for ignoring the texture on shader that takes texture input
+	SimpleTexture*	m_DummyTexture;
+	// TODO: Consider whether a visually noticeable debug texture (pink square pattern or so) is useful somewhere
 
 	GLuint			m_TagIndex;
 
