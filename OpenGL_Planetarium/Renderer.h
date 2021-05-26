@@ -49,6 +49,7 @@ struct LightInfo {
 
 };
 
+
 using RenderQueue = std::vector<RenderRequest>;
 
 
@@ -77,6 +78,7 @@ public:
 	void SetCamera(glm::vec3 position, glm::vec3 up, GLuint cameraID = 0);
 
 	void AddToRenderQueue(const RenderRequest& rr);
+	void AddLightSource(LightInfo li);
 	void RenderFrame();
 
 
@@ -100,6 +102,8 @@ private:
 	TagMap			m_TagMap;
 	RenderDataMap	m_RenderDataMap;
 	
+	std::vector<LightInfo> m_LightSources;
+
 	// These are usually duplicated from the scene camera, but it's probably better 
 	// to avoid querying a separate memory location throughout the frame render process
 	glm::vec3		m_CameraPos;
@@ -119,6 +123,5 @@ private:
 	// TODO: Consider whether a visually noticeable debug texture (pink square pattern or so) is useful somewhere
 
 	GLuint			m_TagIndex;
-
 
 };

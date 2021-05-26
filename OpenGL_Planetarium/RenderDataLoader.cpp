@@ -15,6 +15,7 @@ RenderDataLoader::RenderDataLoader()
 	//m_ObjectDefinitions.insert({ ObjectPreset::ColorSphere, {MeshPreset::BasicSphere, ShaderPreset::PositionColor} });
 	m_ObjectDefinitions.insert({ ObjectPreset::SandPlanet, {MeshPreset::TexturedPlanet, ShaderPreset::Textured, TexturePreset::Sand} });
 	m_ObjectDefinitions.insert({ ObjectPreset::Sun, {MeshPreset::Sun, ShaderPreset::Sun, TexturePreset::Sun} });
+	m_ObjectDefinitions.insert({ ObjectPreset::EarthlikePlanet, {MeshPreset::TexturedPlanet, ShaderPreset::Textured, TexturePreset::Earthlike} });
 
 	m_ShaderPaths.insert({ ShaderPreset::SingleColor , ShaderPaths(".\\shaders\\basic.vs.glsl", ".\\shaders\\basic.fs.glsl") });
 	m_ShaderPaths.insert({ ShaderPreset::VertexColor , ShaderPaths(".\\shaders\\colorvertex.vs.glsl", ".\\shaders\\colorvertex.fs.glsl") });
@@ -24,6 +25,7 @@ RenderDataLoader::RenderDataLoader()
 
 	m_TexturePaths.insert({ TexturePreset::Sand, ".\\res\\img\\perlin_sand.png" });
 	m_TexturePaths.insert({ TexturePreset::Sun, ".\\res\\img\\grayscale-sun.png" });
+	m_TexturePaths.insert({ TexturePreset::Earthlike, ".\\res\\img\\bluegreen_maze.png" });
 }	
 
 MeshDefinition RenderDataLoader::GetMeshDefinition(MeshPreset ps) {

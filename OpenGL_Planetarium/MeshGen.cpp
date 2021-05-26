@@ -411,11 +411,13 @@ MeshDefinition MeshGen::CreateTexturedPlanet()
 	MeshDataUV meshData = CreateGeosphere(1.0, 3); 
 
 	std::vector<glm::vec3> pos;
+	std::vector<glm::vec3> norm;
 	std::vector<glm::vec2> uv;
 
 	for (VertexUV v : meshData.Vertices) {
 
 		pos.push_back(v.Position);
+		norm.push_back(v.Normal);
 		uv.push_back(v.TexC);
 
 	}
@@ -433,14 +435,23 @@ MeshDefinition MeshGen::CreateTexturedPlanet()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexArrayAttrib(VAO, 0);
 
+	GLuint normals;
+	GLHelpers::CreateBuffer(normals);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normals);
+	glBufferData(GL_ARRAY_BUFFER, norm.size() * sizeof(glm::vec3), norm.data(), GL_STATIC_DRAW);
+	
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexArrayAttrib(VAO, 1);
+
 	GLuint TexCoords;
 	GLHelpers::CreateBuffer(TexCoords);
 
 	glBindBuffer(GL_ARRAY_BUFFER, TexCoords);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * uv.size(), uv.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexArrayAttrib(VAO, 1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexArrayAttrib(VAO, 2);
 
 	GLuint IB;
 	GLHelpers::CreateBuffer(IB);

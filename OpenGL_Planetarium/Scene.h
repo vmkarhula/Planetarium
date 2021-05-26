@@ -18,11 +18,12 @@
 
 struct SceneObject {
 
-	SceneObject(glm::vec3 position_, unsigned int rendertag_):
-		position(position_), rotation(0.0), RenderTag(rendertag_){}
+	SceneObject(glm::vec3 position_, float scale_, unsigned int rendertag_):
+		position(position_), rotation(0.0), scale(scale_), RenderTag(rendertag_){}
 
 	glm::vec3 position;
 	glm::vec3 rotation;
+	float scale;
 
 	unsigned int RenderTag; 
 
@@ -61,5 +62,6 @@ private:
 	Camera						m_Camera;
 	std::vector<SceneObject>	m_Objects;
 	float						m_DummyRotation;
+	LightInfo					m_SunDescription;
 
 };

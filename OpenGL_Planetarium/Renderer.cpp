@@ -5,6 +5,8 @@
 
 //using RenderDataLoader::RenderData;
 
+
+
 Renderer::Renderer() :
 	m_Window(nullptr),
 	m_CameraPos(0.0f, 0.0f, 0.0f),
@@ -41,7 +43,7 @@ Renderer::Renderer() :
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(0.025f, 0.025f, 0.10f, 1.0f);
 	
 	m_DataLoader = new  RenderDataLoader();
 
@@ -75,6 +77,8 @@ unsigned int Renderer::GetRenderTag(ObjectPreset ps) {
 void Renderer::BeginFrame()
 {
 	m_RenderQueue.clear();
+	m_LightSources.clear();
+
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
 	m_Projection = glm::perspective(glm::radians(m_Fov), m_AspectRatio, 1.0f, 100.0f);
@@ -92,6 +96,11 @@ void Renderer::AddToRenderQueue(const RenderRequest& rc) {
 
 	m_RenderQueue.emplace_back(rc);
 
+}
+
+void Renderer::AddLightSource(LightInfo li)
+{
+	m_LightSources.push_back(li);
 }
 
 void Renderer::RenderFrame()
@@ -118,8 +127,7 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 	glActiveTexture(GL_TEXTURE0);
 	
 	rd.MatData.Texture->Bind();
-	//m_DummyTexture->Bind();
-
+	
 	glBindVertexArray(rd.VAO);
 	rd.MatData.Shader->Bind();
 	rd.MatData.Shader->SetUniformMat4("viewproj", m_ViewProj);
