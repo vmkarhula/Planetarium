@@ -7,7 +7,7 @@ The project is constant work in progress and serves as a platform for experiment
 
 ## Running the Project
 
-For now, only a visual studio 2019 project is included and the app is tested only on Win 10 PC with NVIDIA GPU. The plan is to include a build system at some point, but for there's plenty to do even without one. 
+For now, only a visual studio 2019 project is included and the app is tested only on Win 10 PC with NVIDIA GPU and mostly run in debug mode. The plan is to include a build system at some point, but for there's plenty to do even without one. 
 
 The project uses GLFW for most of the OS abstaction, so ports to other platforms should be doable at some point and may even work now with little tinkering. 
 
