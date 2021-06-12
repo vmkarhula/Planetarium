@@ -10,24 +10,30 @@ Scene::Scene(Preset ps, Renderer* renderer) :
 	switch (ps) {
 
 	case Preset::basic:
+				
+		m_BaseNode.reset(new Orbiter(nullptr, 0.0f, 0.0f, glm::vec3(1.0), glm::vec3(0.0), 3.0f, renderer->GetRenderTag(ObjectPreset::Sun)));
 		
+		/*
 		m_Objects.emplace_back(
-			SceneObject(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f,
+			SceneNode(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f,
 				renderer->GetRenderTag(ObjectPreset::Sun)));
 
 		m_Objects.emplace_back(
-			SceneObject(glm::vec3(0.0f, 0.0f, 0.0f), 0.8f, 
+			SceneNode(glm::vec3(0.0f, 0.0f, 0.0f), 0.8f, 
 				renderer->GetRenderTag(ObjectPreset::SandPlanet)));
 
 		m_Objects.emplace_back(
-			SceneObject(glm::vec3(0.0f, 0.0f, 0.0f), 1.3f,
+			SceneNode(glm::vec3(0.0f, 0.0f, 0.0f), 1.3f,
 				renderer->GetRenderTag(ObjectPreset::EarthlikePlanet)));
-				
+			
+		*/
+
 		m_SunDescription.Position = glm::vec3(0.0f, 0.0f, 0.0f);
 		m_SunDescription.Ambient = glm::vec3(0.2f, 0.2f, 0.2f);
 		m_SunDescription.Diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
 		m_SunDescription.Specular = glm::vec3(0.05f, 0.05f, 0.05f);
 
+		
 	}
 }
 Scene::~Scene()
@@ -36,13 +42,15 @@ Scene::~Scene()
 
 void Scene::Update(float dt, EventQueue* eq)
 {
+	m_BaseNode->Update(dt);
+	
 	if (eq) {
 
 		while (!eq->Empty())
 			ProcessEvent(eq->Pop());
 
 	}
-	
+	/*
 	m_Objects[0].rotation.y += 2.0f * dt;
 	m_Objects[0].rotation.x += 2.0f * dt;
 
@@ -83,7 +91,7 @@ void Scene::Update(float dt, EventQueue* eq)
 	else if (m_Objects[2].rotation.y >= glm::two_pi<float>()) {
 		m_Objects[2].rotation.y -= glm::two_pi<float>();
 	}
-
+	*/
 }
 
 void Scene::GetRenderRequests(Renderer* renderer)
@@ -92,7 +100,7 @@ void Scene::GetRenderRequests(Renderer* renderer)
 	renderer->AddLightSource(m_SunDescription);
 
 	// For each space partition, get object render data
-	for (const SceneObject& obj : m_Objects) {	
+	/*for (const SceneNode& obj : m_Objects) {	
 		
 		glm::mat4 model = glm::mat4(1.0);
 
@@ -101,7 +109,9 @@ void Scene::GetRenderRequests(Renderer* renderer)
 		model = glm::rotate(model, obj.rotation.y, glm::vec3(1.0f, 1.0f, 0.0f));
 				
 		renderer->AddToRenderQueue(RenderRequest{ model, obj.RenderTag });
-	}
+	}*/
+
+	m_BaseNode->GetRenderRequest(renderer);
 }
 
 void Scene::ProcessEvent(Event e)

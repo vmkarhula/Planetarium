@@ -6,19 +6,20 @@
 #include "glm/glm.hpp"
 
 #include "Event.h"
+#include "SceneNode.h"
 
 #include <vector>
-
+#include <memory>
 
 /*	
 	Scene is the actual simulation of the objects and their relations
 	Once per frame it fills the renderqueue that'll then get renderered by the
 	renderer 
 */
+/*
+struct SceneNode {
 
-struct SceneObject {
-
-	SceneObject(glm::vec3 position_, float scale_, unsigned int rendertag_):
+	SceneNode(glm::vec3 position_, float scale_, unsigned int rendertag_):
 		position(position_), rotation(0.0), scale(scale_), RenderTag(rendertag_){}
 
 	glm::vec3 position;
@@ -28,7 +29,7 @@ struct SceneObject {
 	unsigned int RenderTag; 
 
 };
-
+*/
 class Scene {
 
 public: 
@@ -60,8 +61,9 @@ private:
 private:
 
 	Camera						m_Camera;
-	std::vector<SceneObject>	m_Objects;
+	std::vector<SceneNode>		m_Objects;
 	float						m_DummyRotation;
 	LightInfo					m_SunDescription;
-
+	
+	std::unique_ptr<SceneNode>	m_BaseNode;
 };

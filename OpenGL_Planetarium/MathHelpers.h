@@ -11,7 +11,7 @@ namespace MathHelpers {
 	// Returns radian float of origo-centered angle to point (x, y)
 	// Useful for sphere creation for example. 
 	// Algorirhm taken from Frank Luna's Dx11 book.
-	float PolarAngleFromXY(float x, float y) {
+	inline float PolarAngleFromXY(float x, float y) {
 
 		float theta = 0.0f;
 
@@ -32,5 +32,29 @@ namespace MathHelpers {
 
 	}
 
+	// Loops angles around desired point. For example 361 goes back to 1
+	inline void NormalizeRotation(glm::vec3& rot, float min, float max) {
+
+		if (rot.x > max)
+			rot.x -= max;
+
+		else if (rot.x < min)
+			rot.x += max; 
+
+		if (rot.y > max)
+			rot.y -= max;
+
+		else if (rot.y < min)
+			rot.y += max;
+
+		if (rot.z > max)
+			rot.z -= max;
+
+		else if (rot.z < min)
+			rot.z += max;
+
+	}
+
+	
 
 }

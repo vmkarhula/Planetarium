@@ -32,10 +32,12 @@
 	like experimenting a bit with more data oriented approach for the sake of learning.
 */
 struct RenderRequest {
-		
-	glm::mat4 Transform;
-	GLuint RendererID;
-	std::byte Params[32]; 
+	
+	glm::vec3	Position;
+	glm::vec3	Rotation;
+	glm::vec3	Scale; 
+	GLuint		RendererID;
+	std::byte	Params[32]; 
 
 };
 

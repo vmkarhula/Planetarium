@@ -1,5 +1,8 @@
 #include "PlanetariumApp.h"
 
+#include "DearIMGui/imgui.h"
+#include "DearIMGui/imgui_impl_glfw.h"
+#include "DearIMGui/imgui_impl_opengl3.h"
 
 #include <iostream>
 
@@ -66,6 +69,26 @@ bool PlanetariumApp::Init(){
     glfwSetCursorPosCallback(m_MainWindow, InputCallbacks::I_MousePositionForwarder);
     glfwSetScrollCallback(m_MainWindow, InputCallbacks::I_MouseScrollForwarder);
 
+
+    // Set up Dear ImGui
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsClassic();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(m_MainWindow, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
+
+   
+
     return true; 
 }
 
@@ -76,6 +99,10 @@ void PlanetariumApp::Run() {
 
     while (!glfwWindowShouldClose(m_MainWindow))
     {
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         // Read input & update the world state
         glfwPollEvents();

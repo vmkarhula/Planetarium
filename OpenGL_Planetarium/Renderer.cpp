@@ -3,6 +3,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <iostream>
 
+#include "DearIMGui/imgui.h"
+#include "DearIMGui/imgui_impl_glfw.h"
+#include "DearIMGui/imgui_impl_opengl3.h"
 //using RenderDataLoader::RenderData;
 
 
@@ -117,12 +120,25 @@ void Renderer::RenderFrame()
 		DrawRenderRequest(rr);
 	}
 	
+	bool imguiOpen = true;
+
+
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	glfwSwapBuffers(m_Window);
 }
 
 void Renderer::DrawRenderRequest(const RenderRequest& rr)
 {
 	RenderData rd = m_RenderDataMap[rr.RendererID];
+
+	glm::mat4 modelMtx(1.0f);
+
+	modelMtx = glm::translate(modelMtx, rr.Position);
+	modelMtx = glm::rotate(modelMtx, 1.0f, rr.Rotation);
+	modelMtx = glm::scale(modelMtx, rr.Scale);
 
 	glActiveTexture(GL_TEXTURE0);
 	
@@ -131,7 +147,7 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 	glBindVertexArray(rd.VAO);
 	rd.MatData.Shader->Bind();
 	rd.MatData.Shader->SetUniformMat4("viewproj", m_ViewProj);
-	rd.MatData.Shader->SetUniformMat4("model", rr.Transform);
+	rd.MatData.Shader->SetUniformMat4("model", modelMtx);
 
 	glDrawElements(GL_TRIANGLES, rd.IndexCount, GL_UNSIGNED_INT, 0);
 
