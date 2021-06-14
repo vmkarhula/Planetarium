@@ -19,7 +19,7 @@ public:
 	virtual void Update(float dt) = 0;
 	virtual void GetRenderRequest(Renderer* renderer) = 0;
 
-	virtual void AddChild(std::unique_ptr<SceneNode> node) = 0;
+	virtual void AddChild(std::unique_ptr<SceneNode>&& node) = 0;
 	
 	glm::vec3 Position() const { return m_Position; }
 	int	ID() const { return m_NodeID; }
@@ -45,7 +45,8 @@ public:
 	};
 
 
-	Orbiter(SceneNode* parent, float orbitSpeed, float orbitRadius, glm::vec3 orbitAxis, glm::vec3 spin, float scale, int m_RenderTag, bool drawDebugMenu = false);
+	Orbiter(SceneNode* parent, float orbitSpeed, float orbitRadius, glm::vec3 orbitAxis, glm::vec3 spinAngle, float spinSpeed, float scale, int m_RenderTag, bool drawDebugMenu = false);
+	
 	Orbiter(const Orbiter& lhs) = delete;
 	Orbiter(Orbiter&& lhs) = delete;
 	Orbiter operator=(const Orbiter& rhs) = delete;
@@ -60,7 +61,7 @@ public:
 	void Update(float dt) override;
 	void GetRenderRequest(Renderer* renderer) override;
 	
-	void AddChild(std::unique_ptr<SceneNode> node) override; 
+	void AddChild(std::unique_ptr<SceneNode>&& node) override; 
 
 private: 
 
@@ -73,6 +74,7 @@ private:
 	float m_OrbitPos;
 	glm::vec3 m_OrbitAxis; 
 	glm::vec3 m_Scale; 
-	glm::vec3 m_Spin;
+	glm::vec3 m_SpinAngle;
+	float m_SpinValue;
 	bool m_DrawDebugMenu;
 };

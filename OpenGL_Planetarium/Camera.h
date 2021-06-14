@@ -10,11 +10,9 @@ public:
 
 	Camera();
 		 
-	glm::vec3 GetPos(){ return m_Position; }
-	glm::vec3 GetUpwards(){ return m_Upwards; }
+	glm::vec3 GetPos() const { return m_Position; }
+	glm::vec3 GetUpwards() const { return m_Upwards; }
 	
-
-
 	void AdjustRadius(float change); 
 	//void AdjustTheta(float change) { m_Theta += change; CalculateOrbitalCoords();}
 	//void AdjustPhi(float change) { m_Phi += change; CalculateOrbitalCoords();}

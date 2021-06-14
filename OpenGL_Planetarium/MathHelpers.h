@@ -33,7 +33,7 @@ namespace MathHelpers {
 	}
 
 	// Loops angles around desired point. For example 361 goes back to 1
-	inline void NormalizeRotation(glm::vec3& rot, float min, float max) {
+	inline void NormalizeRotationVec3(glm::vec3& rot, float min, float max) {
 
 		if (rot.x > max)
 			rot.x -= max;
@@ -55,6 +55,15 @@ namespace MathHelpers {
 
 	}
 
-	
+	inline void NormalizeRotationF(float& rot, float min, float max) {
+
+
+		if (rot > max)
+			rot -= max;
+
+		else if (rot < min)
+			rot += max;
+
+	}
 
 }

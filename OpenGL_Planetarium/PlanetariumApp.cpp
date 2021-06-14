@@ -20,14 +20,14 @@ PlanetariumApp::PlanetariumApp():
 // TODO: Move to smart pointers where ever appropriate
 PlanetariumApp::~PlanetariumApp()
 {
-    if(m_Renderer)
-        delete(m_Renderer);
-    
-    if(m_MainScene)
-        delete(m_MainScene);
+    delete(m_Renderer);
+    delete(m_EventQueue);
+    delete(m_MainScene);
+    delete(m_InputHandler);
 
     if (m_MainWindow)
         glfwDestroyWindow(m_MainWindow);
+
 }
 
 

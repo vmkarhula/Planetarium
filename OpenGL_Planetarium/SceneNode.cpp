@@ -19,7 +19,7 @@ SceneNode::SceneNode(glm::vec3 position_, SceneNode* parent_, int renderTag_) :
 	m_NodeID = m_IDCounter++;
 }
 
-Orbiter::Orbiter(SceneNode* parent, float orbitSpeed, float orbitRadius, glm::vec3 orbitAxis, glm::vec3 spin, float scale, int renderTag, bool drawDebugMenu):
+Orbiter::Orbiter(SceneNode* parent, float orbitSpeed, float orbitRadius, glm::vec3 orbitAxis, glm::vec3 spinAngle, float spinSpeed, float scale, int renderTag, bool drawDebugMenu):
 
 	SceneNode(glm::vec3(0.0f), parent, renderTag),
 	m_OrbitSpeed(orbitSpeed),
@@ -27,7 +27,8 @@ Orbiter::Orbiter(SceneNode* parent, float orbitSpeed, float orbitRadius, glm::ve
 	m_OrbitRadius(orbitRadius),
 	m_OrbitAxis(orbitAxis),
 	m_Scale(scale),
-	m_Spin(spin),
+	m_SpinAngle(spinAngle),
+	m_SpinValue(0.0f),
 	m_DrawDebugMenu(drawDebugMenu)
 {
 	CalculatePosition();
@@ -39,17 +40,28 @@ void Orbiter::Update(float dt)
 
 	if(m_Parent)
 		parentPos = m_Parent->Position();
+	
+	m_OrbitPos += m_OrbitSpeed * dt;
+
+	if (m_OrbitPos > 1.0f)
+		m_OrbitPos -= 1.0f;
+
+	else if (m_OrbitPos < 0.0f)
+		m_OrbitPos += 1.0f;
+
+	m_Position.x = parentPos.x + m_OrbitRadius * (glm::cos(m_OrbitPos * glm::two_pi<float>()));
+	m_Position.z = parentPos.z + m_OrbitRadius * (glm::sin(m_OrbitPos * glm::two_pi<float>()));
+	
+	m_SpinValue += 1.0f * dt;
+	
+	MathHelpers::NormalizeRotationF(m_SpinValue, 0.0f, glm::two_pi<float>());
 
 	
-	m_Spin.y += 2.0f * dt;
-	
-	MathHelpers::NormalizeRotation(m_Spin, 0.0f, glm::two_pi<float>());
-
 	
 	if(m_DrawDebugMenu){
 		
 		ImGui::Begin("Another Window", &m_DrawDebugMenu);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
+		ImGui::SliderFloat("float", &m_SpinValue, 0.0f, glm::two_pi<float>());
 		ImGui::End();
 	}
 
@@ -106,10 +118,11 @@ void Orbiter::Update(float dt)
 void Orbiter::GetRenderRequest(Renderer* renderer)
 {
 	RenderRequest rr;
-	rr.RendererID	=	m_RenderTag;
-	rr.Rotation		=	m_Spin;
-	rr.Scale		=	m_Scale;
-	rr.Position		=	m_Position;
+	rr.RendererID		=	m_RenderTag;
+	rr.RotationAngle	=	m_SpinAngle;
+	rr.RotationAmount	=	m_SpinValue;
+	rr.Scale			=	m_Scale;
+	rr.Position			=	m_Position;
 
 	renderer->AddToRenderQueue(rr);
 
@@ -120,7 +133,7 @@ void Orbiter::GetRenderRequest(Renderer* renderer)
 
 }
 
-void Orbiter::AddChild(std::unique_ptr<SceneNode> node)
+void Orbiter::AddChild(std::unique_ptr<SceneNode>&& node)
 {
 	m_Children.push_back(std::move(node));
 }

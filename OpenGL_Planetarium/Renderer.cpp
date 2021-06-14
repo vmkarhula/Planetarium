@@ -137,7 +137,7 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 	glm::mat4 modelMtx(1.0f);
 
 	modelMtx = glm::translate(modelMtx, rr.Position);
-	modelMtx = glm::rotate(modelMtx, 1.0f, rr.Rotation);
+	modelMtx = glm::rotate(modelMtx, rr.RotationAmount, rr.RotationAngle);
 	modelMtx = glm::scale(modelMtx, rr.Scale);
 
 	glActiveTexture(GL_TEXTURE0);

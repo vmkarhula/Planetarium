@@ -34,7 +34,8 @@
 struct RenderRequest {
 	
 	glm::vec3	Position;
-	glm::vec3	Rotation;
+	glm::vec3	RotationAngle;
+	float	RotationAmount;
 	glm::vec3	Scale; 
 	GLuint		RendererID;
 	std::byte	Params[32]; 
@@ -71,7 +72,7 @@ public:
 	// GLFW uses window handle for example in input and messaging, 
 	// so it is needed outside the renderer also. 
 	// TODO: Figure out if some kind of clear ownership model is possible here. 
-	GLFWwindow* GetWindowHandle() { return m_Window; }
+	GLFWwindow* GetWindowHandle() const { return m_Window; }
 	
 	unsigned int GetRenderTag(ObjectPreset ps);
 
