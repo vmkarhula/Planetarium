@@ -43,3 +43,6 @@ GLM is an OpenGL standard-compliant and widely used math library. It is licenced
 
 ### Dear ImGui
 Dear ImGui is used for the graphical user interface. It is licenced under the MIT License. 
+
+### Tiny Obj Loader
+Tinyobjloader is used (duh) for loading .obj model files. It is licenced under the MIT License. (Available at include header folder).
