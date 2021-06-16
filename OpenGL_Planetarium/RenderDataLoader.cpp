@@ -116,6 +116,22 @@ RenderData RenderDataLoader::GetObjectData(ObjectPreset obsps)
 	return rd;
 }
 
+RenderData RenderDataLoader::GetScreenQuad()
+{
+	static bool ScreenQuadInitialized = false;
+	
+	if (!ScreenQuadInitialized) {
+		
+		MeshDefinition md = MeshGen::CreateScreenQuad();
+
+		m_ScreenQuadRD.VAO = md.VAO;
+		m_ScreenQuadRD.IndexCount = md.IndexCount;
+		
+	}
+
+	return m_ScreenQuadRD;
+}
+
 SimpleShader* RenderDataLoader::GetShader(ShaderPreset shaderps)
 {
 	auto shaderSearch = m_ShaderMap.find(shaderps);

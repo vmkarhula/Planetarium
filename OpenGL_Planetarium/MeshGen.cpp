@@ -471,6 +471,53 @@ MeshDefinition MeshGen::CreateTexturedPlanet()
 	return md;
 }
 
+MeshDefinition MeshGen::CreateScreenQuad()
+{
+	GLuint VAO = 0;
+
+	if (!GLHelpers::CreateVAO(VAO)) {
+
+		return MeshDefinition{ 0, 0 };
+	}
+	
+	glBindVertexArray(VAO);
+
+	GLuint VB = 0;
+
+	if (!GLHelpers::CreateBuffer(VB)) {
+
+		return MeshDefinition{ 0 , 0 };
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, VB);
+
+	GLfloat vertices[] = {
+
+		-1.0f, -1.0f,		0.0f, 0.0f,
+		 1.0f, -1.0f,		1.0f, 0.0f,
+		-1.0f,  1.0f,		0.0f, 1.0f,
+		 1.0f,  1.0f,		1.0f, 1.0f
+
+	};
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+	
+	glEnableVertexArrayAttrib(VAO, 0);
+	glEnableVertexArrayAttrib(VAO, 1);
+	
+	MeshDefinition md;
+	
+	md.IndexCount = 4;
+	md.VAO = VAO;
+
+	glBindVertexArray(0);
+
+	return md;
+}
+
 MeshDefinition MeshGen::CreateSun()
 {
 	MeshDataUV md = CreateGeosphere(1.0f, 4);

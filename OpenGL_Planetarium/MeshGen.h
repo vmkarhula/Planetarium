@@ -88,6 +88,7 @@ namespace MeshGen {
 	MeshDefinition CreateBasicSphere();
 	MeshDefinition CreateColorSphere();
 	MeshDefinition CreateTexturedPlanet();
+	MeshDefinition CreateScreenQuad();
 	
 	// Sun has a bit of a different shading and for now, a bit different mesh data. 
 	MeshDefinition CreateSun();

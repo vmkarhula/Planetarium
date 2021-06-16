@@ -93,14 +93,23 @@ private:
 	// Transforms RenderTags into actual render data
 	using RenderDataMap = std::unordered_map<GLuint, RenderData>;
 		
-	
+	// Processes a single renderrequest form into a draw action
 	void DrawRenderRequest(const RenderRequest& rr);
+
+	// Helper to generate the needed framebuffers inside the class
+	void PrepareFramebuffers();
+
 
 private:
 	
 	GLFWwindow*		m_Window;
+	GLuint			m_ScreenWidth;
+	GLuint			m_ScreenHeight;
+
 	RenderQueue		m_RenderQueue;
 	RenderDataLoader* m_DataLoader;
+	GLuint			m_Framebuffer;
+	GLuint			m_ScreenQuadTexture;
 
 	TagMap			m_TagMap;
 	RenderDataMap	m_RenderDataMap;
@@ -120,10 +129,13 @@ private:
 	float			m_AspectRatio;
 
 	SimpleShader*	m_BasicShader;
+	SimpleShader*	m_ScreenQuadShader;
 	
 	// Dummy white 1x1 texture. Can be useful for ignoring the texture on shader that takes texture input
 	SimpleTexture*	m_DummyTexture;
 	// TODO: Consider whether a visually noticeable debug texture (pink square pattern or so) is useful somewhere
+
+	GLuint			m_ScreenQuadVAO;
 
 	GLuint			m_TagIndex;
 

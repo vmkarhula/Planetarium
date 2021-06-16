@@ -68,7 +68,10 @@ public:
 	RenderDataLoader();
 
 	RenderData GetObjectData(ObjectPreset obsps);
-		
+	
+	// Returns a simple setup for drawing a texture on the screen
+	RenderData GetScreenQuad();
+
 private:
 		
 	struct ObjectDefinition {
@@ -115,6 +118,8 @@ private:
 	ShaderMap		m_ShaderMap;
 	MeshMap			m_MeshMap;
 	TextureMap		m_TextureMap;
+
+	RenderData		m_ScreenQuadRD; 
 
 	// These are populated at class instance construction
 	// 
