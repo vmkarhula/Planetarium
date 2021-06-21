@@ -25,7 +25,12 @@ The project is heavily work in progress. The initial target is to get a nicely P
  - Model loading for rockets, satellites and such. NASA has some sweet free-to-use 3D models that could be added.
  - "Skybox" for space background or even for more experimental enviroments. 
  - General visual improvements.  
+ - Instancing for all kinds of neat clusters
  - ect ect... 
+
+#### Things I plan to improve
+ - The object ownership model is a bit sketchy. Most of the objects have a fairly clear owner, but this could probably be done nicer with some smart pointers
+ - The renderer is constant work in progress. General cleanup is due at some point. 
 
 ## External Dependencies
 
