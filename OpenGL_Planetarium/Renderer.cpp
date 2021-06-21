@@ -160,6 +160,7 @@ void Renderer::RenderFrame()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
+
 	glfwSwapBuffers(m_Window);
 }
 
