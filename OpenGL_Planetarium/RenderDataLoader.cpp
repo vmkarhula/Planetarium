@@ -16,16 +16,25 @@ RenderDataLoader::RenderDataLoader()
 	m_ObjectDefinitions.insert({ ObjectPreset::SandPlanet, {MeshPreset::TexturedPlanet, ShaderPreset::Textured, TexturePreset::Sand} });
 	m_ObjectDefinitions.insert({ ObjectPreset::Sun, {MeshPreset::Sun, ShaderPreset::Sun, TexturePreset::Sun} });
 	m_ObjectDefinitions.insert({ ObjectPreset::EarthlikePlanet, {MeshPreset::TexturedPlanet, ShaderPreset::Textured, TexturePreset::Earthlike} });
-
+		
 	m_ShaderPaths.insert({ ShaderPreset::SingleColor , ShaderPaths(".\\shaders\\basic.vs.glsl", ".\\shaders\\basic.fs.glsl") });
 	m_ShaderPaths.insert({ ShaderPreset::VertexColor , ShaderPaths(".\\shaders\\colorvertex.vs.glsl", ".\\shaders\\colorvertex.fs.glsl") });
 	m_ShaderPaths.insert({ ShaderPreset::PositionColor, ShaderPaths(".\\shaders\\positioncolor.vs.glsl", ".\\shaders\\colorvertex.fs.glsl") });
 	m_ShaderPaths.insert({ ShaderPreset::Textured, ShaderPaths(".\\shaders\\textured.vs.glsl", ".\\shaders\\textured.fs.glsl") });
 	m_ShaderPaths.insert({ ShaderPreset::Sun, ShaderPaths(".\\shaders\\sun.vs.glsl", ".\\shaders\\sun.fs.glsl") });
+	m_ShaderPaths.insert({ ShaderPreset::Skybox, ShaderPaths(".\\shaders\\skybox.vs.glsl", ".\\shaders\\skybox.fs.glsl") });
 
 	m_TexturePaths.insert({ TexturePreset::Sand, ".\\res\\img\\perlin_sand.png" });
 	m_TexturePaths.insert({ TexturePreset::Sun, ".\\res\\img\\grayscale-sun.png" });
 	m_TexturePaths.insert({ TexturePreset::Earthlike, ".\\res\\img\\bluegreen_maze.png" });
+	
+	m_SkyboxPaths.insert({ Skybox::DefaultSpace, { 	
+		".\\res\\img\\sb_right.png", 
+		".\\res\\img\\sb_left.png", 
+		".\\res\\img\\sb_top.png", 
+		".\\res\\img\\sb_bottom.png",
+		".\\res\\img\\sb_front.png",
+		".\\res\\img\\sb_back.png"} });
 }	
 
 MeshDefinition RenderDataLoader::GetMeshDefinition(MeshPreset ps) {
@@ -75,6 +84,12 @@ MeshDefinition RenderDataLoader::GenerateMesh(MeshPreset ps)
 
 		return MeshGen::CreateSun();
 
+	} break;
+	
+
+	case MeshPreset::Skybox: {
+
+		return MeshGen::CreateSkybox();
 	}
 
 	default: {
@@ -86,6 +101,11 @@ MeshDefinition RenderDataLoader::GenerateMesh(MeshPreset ps)
 	}
 		
 	return MeshDefinition();
+}
+
+SimpleTexture* RenderDataLoader::GenerateSkybox(std::vector<std::string>paths)
+{
+	return new SimpleTexture(paths);	
 }
 
 
@@ -114,6 +134,24 @@ RenderData RenderDataLoader::GetObjectData(ObjectPreset obsps)
 	rd.MatData.Texture = texture;
 
 	return rd;
+}
+
+RenderData RenderDataLoader::GetObjectData(Skybox s)
+{
+
+	MeshDefinition md = GetMeshDefinition(MeshPreset::Skybox);
+	SimpleShader* shader = GetShader(ShaderPreset::Skybox);
+	SimpleTexture* texture = GetSkybox(s);
+
+	RenderData rd;
+
+	rd.VAO = md.VAO;
+	rd.IndexCount = md.IndexCount;
+	rd.MatData.Shader = shader;
+	rd.MatData.Texture = texture;
+
+	return rd;
+
 }
 
 RenderData RenderDataLoader::GetScreenQuad()
@@ -168,5 +206,43 @@ SimpleTexture* RenderDataLoader::GetTexture(TexturePreset textureps)
 	}
 	
 	return new SimpleTexture(texturePathSearch->second);
+}
+
+/*
+SimpleTexture* RenderDataLoader::GetTexture(Skybox s)
+{
+	auto textureSearch = m_SkyboxTextures.find(s);
+
+	if (textureSearch != m_SkyboxTextures.end())
+		return textureSearch->second;
+
+	auto texturePathSearch = m_SkyboxPaths.find(s);
+
+	if (texturePathSearch == m_SkyboxPaths.end()) {
+
+		std::cerr << "Error, texture filepath not found!" << std::endl;
+		return nullptr;
+	}
+
+	return new SimpleTexture(texturePathSearch->second);
+}
+*/
+
+SimpleTexture* RenderDataLoader::GetSkybox(Skybox s) {
+
+	auto sbSearch = m_SkyboxMap.find(s);
+
+	if (sbSearch != m_SkyboxMap.end())
+		return sbSearch->second;
+
+	auto skyboxPathSearch = m_SkyboxPaths.find(s);
+
+	if (skyboxPathSearch == m_SkyboxPaths.end()) {
+
+		std::cerr << "Error, skybox filepaths not found!" << std::endl;
+		return nullptr;
+	}
+
+	return GenerateSkybox(skyboxPathSearch->second);
 }
 

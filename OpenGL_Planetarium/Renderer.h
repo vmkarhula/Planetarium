@@ -75,6 +75,8 @@ public:
 	GLFWwindow* GetWindowHandle() const { return m_Window; }
 	
 	unsigned int GetRenderTag(ObjectPreset ps);
+	
+	void UseSkybox(Skybox sb);
 
 	void BeginFrame();
 
@@ -98,6 +100,9 @@ private:
 
 	// Helper to generate the needed framebuffers inside the class
 	void PrepareFramebuffers();
+
+	// 
+	void DrawSkybox();
 
 
 private:
@@ -138,5 +143,7 @@ private:
 	GLuint			m_ScreenQuadVAO;
 
 	GLuint			m_TagIndex;
+
+	RenderData		m_Skybox; 
 
 };

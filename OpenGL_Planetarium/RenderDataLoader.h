@@ -68,6 +68,7 @@ public:
 	RenderDataLoader();
 
 	RenderData GetObjectData(ObjectPreset obsps);
+	RenderData GetObjectData(Skybox s);
 	
 	// Returns a simple setup for drawing a texture on the screen
 	RenderData GetScreenQuad();
@@ -91,7 +92,6 @@ private:
 
 	};
 
-
 	// Transforms ShaderTags into actual shader pointer; 
 	using ShaderMap = std::unordered_map<ShaderPreset, SimpleShader*>;
 	// 
@@ -104,20 +104,27 @@ private:
 	SimpleShader* GetShader(ShaderPreset shaderps);
 	
 	SimpleTexture* GetTexture(TexturePreset textureps);
+	SimpleTexture* GetSkybox(Skybox s);
+	//SimpleTexture* GetTexture(Skybox s);
+	
 
+	
 	// Searches already existing meshes, calls for generatemesh if needed mesh isn't available yet
 	MeshDefinition GetMeshDefinition(MeshPreset ps);
 	
 	// Generates mesh
 	MeshDefinition GenerateMesh(MeshPreset ps);
 
+	SimpleTexture* GenerateSkybox(std::vector<std::string> paths);
 
 private:
+
 
 	// These are populated as data is requested and generated
 	ShaderMap		m_ShaderMap;
 	MeshMap			m_MeshMap;
 	TextureMap		m_TextureMap;
+	std::unordered_map < Skybox, SimpleTexture*> m_SkyboxMap;
 
 	RenderData		m_ScreenQuadRD; 
 
@@ -126,8 +133,11 @@ private:
 	// Maps object preset into individual part presets
 	std::unordered_map<ObjectPreset, ObjectDefinition> m_ObjectDefinitions;
 
+	std::unordered_map<Skybox, ObjectDefinition> m_SkyBoxes;
+
 	// Maps Shader preset into actual shader code filepath
 	std::unordered_map<ShaderPreset, ShaderPaths> m_ShaderPaths;
 	std::unordered_map<TexturePreset, std::string> m_TexturePaths;
-	
+	std::unordered_map<Skybox, std::vector<std::string>> m_SkyboxPaths;
+	std::unordered_map<Skybox, SimpleTexture*> m_SkyboxTextures;
 };

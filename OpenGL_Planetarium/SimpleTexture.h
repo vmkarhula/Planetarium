@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "glad/glad.h"
 
@@ -12,6 +13,9 @@ public:
 	
 	SimpleTexture(Preset ps);
 	SimpleTexture(std::string filepath);
+
+	// Skybox/cubemap constructor. TODO: Possibly create a class of its own for this? 
+	SimpleTexture(std::vector<std::string> skyboxpaths);
 	~SimpleTexture();
 
 	SimpleTexture(const SimpleTexture& t) = delete;
@@ -20,6 +24,7 @@ public:
 	SimpleTexture operator=(SimpleTexture&& t) = delete;
 
 	void Bind();
+	GLuint ID() { return m_GLID; }
 
 private:
 

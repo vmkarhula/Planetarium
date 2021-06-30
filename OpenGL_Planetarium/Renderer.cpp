@@ -69,7 +69,7 @@ Renderer::Renderer() :
 
 	m_ScreenQuadVAO = rd.VAO;
 
-
+	m_Skybox = m_DataLoader->GetObjectData(Skybox::DefaultSpace);
 }
 
 Renderer::~Renderer()
@@ -93,6 +93,11 @@ unsigned int Renderer::GetRenderTag(ObjectPreset ps) {
 	
 	return static_cast<unsigned int>(m_TagIndex);
 
+}
+
+void Renderer::UseSkybox(Skybox sb)
+{
+	m_Skybox = m_DataLoader->GetObjectData(sb);
 }
 
 void Renderer::BeginFrame()
@@ -131,10 +136,10 @@ void Renderer::RenderFrame()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	
-	glm::mat4 view = glm::lookAt(m_CameraPos, glm::vec3(0.0f, 0.0f, 0.0f), m_CameraUp);
+	m_View = glm::lookAt(m_CameraPos, glm::vec3(0.0f, 0.0f, 0.0f), m_CameraUp);
 	//glm::mat4 model = glm::rotate(glm::mat4(1.0f))
 
-	m_ViewProj = m_Projection * view * glm::mat4(1.0);
+	m_ViewProj = m_Projection * m_View * glm::mat4(1.0);
 	
 
 	for (const RenderRequest& rr : m_RenderQueue) {
@@ -142,6 +147,8 @@ void Renderer::RenderFrame()
 		DrawRenderRequest(rr);
 	}
 	
+	DrawSkybox();
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -216,4 +223,27 @@ void Renderer::PrepareFramebuffers()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+}
+
+void Renderer::DrawSkybox()
+{
+	
+	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL);
+	glBindVertexArray(m_Skybox.VAO);
+	m_Skybox.MatData.Shader->Bind();
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_Skybox.MatData.Texture->ID());
+	glActiveTexture(GL_TEXTURE0);
+
+	m_Skybox.MatData.Shader->SetUniformMat4("projection", m_Projection);
+	m_Skybox.MatData.Shader->SetUniformMat4("view", glm::mat4(glm::mat3(m_View)));
+
+	glDrawArrays(GL_TRIANGLES, 0, m_Skybox.IndexCount);
+	
+	glBindVertexArray(0);
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE0, 0);
+
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
 }
