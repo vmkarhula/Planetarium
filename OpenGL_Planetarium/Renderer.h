@@ -9,6 +9,7 @@
 #include "SimpleShader.h"
 #include "SimpleTexture.h"
 #include "RenderDataLoader.h"
+#include "Cubemap.h"
 
 #include <vector>
 #include <unordered_map>
@@ -76,7 +77,7 @@ public:
 	
 	unsigned int GetRenderTag(ObjectPreset ps);
 	
-	void UseSkybox(Skybox sb);
+	void UseSkybox(SkyboxPreset sb);
 
 	void BeginFrame();
 
@@ -144,6 +145,9 @@ private:
 
 	GLuint			m_TagIndex;
 
-	RenderData		m_Skybox; 
+	SkyboxRenderDesc m_Skybox;
+
+	Cubemap*		m_SkyboxTexture;
+	SimpleShader*	m_SkyboxShader; 
 
 };

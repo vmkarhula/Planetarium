@@ -4,6 +4,7 @@
 #include "glad/glad.h"
 
 #include "MeshGen.h"
+#include "Cubemap.h"
 
 #include <unordered_map>
 #include <string>
@@ -20,6 +21,16 @@
 
 class SimpleShader;
 class SimpleTexture;
+
+struct SkyboxRenderDesc {
+
+	SimpleShader*	Shader;
+	Cubemap*		Texture;
+	
+	GLuint			VAO;
+	GLuint			IndexCount;
+
+};
 
 struct MatProperties {
 
@@ -58,6 +69,7 @@ struct RenderData {
 
 };
 
+
 // Factory for render data. 
 // Doesn't manage any instances or clean anything,
 // simply generates them and hands them over
@@ -68,7 +80,7 @@ public:
 	RenderDataLoader();
 
 	RenderData GetObjectData(ObjectPreset obsps);
-	RenderData GetObjectData(Skybox s);
+	SkyboxRenderDesc GetSkyboxDesc(SkyboxPreset s);
 	
 	// Returns a simple setup for drawing a texture on the screen
 	RenderData GetScreenQuad();
@@ -104,7 +116,7 @@ private:
 	SimpleShader* GetShader(ShaderPreset shaderps);
 	
 	SimpleTexture* GetTexture(TexturePreset textureps);
-	SimpleTexture* GetSkybox(Skybox s);
+	Cubemap* GetCubemap(SkyboxPreset s);
 	//SimpleTexture* GetTexture(Skybox s);
 	
 
@@ -115,7 +127,7 @@ private:
 	// Generates mesh
 	MeshDefinition GenerateMesh(MeshPreset ps);
 
-	SimpleTexture* GenerateSkybox(std::vector<std::string> paths);
+	Cubemap* GenerateSkybox(std::vector<std::string> paths);
 
 private:
 
@@ -124,20 +136,18 @@ private:
 	ShaderMap		m_ShaderMap;
 	MeshMap			m_MeshMap;
 	TextureMap		m_TextureMap;
-	std::unordered_map < Skybox, SimpleTexture*> m_SkyboxMap;
+	std::unordered_map < SkyboxPreset, Cubemap*> m_SkyboxMap;
 
 	RenderData		m_ScreenQuadRD; 
 
 	// These are populated at class instance construction
 	// 
 	// Maps object preset into individual part presets
-	std::unordered_map<ObjectPreset, ObjectDefinition> m_ObjectDefinitions;
-
-	std::unordered_map<Skybox, ObjectDefinition> m_SkyBoxes;
+	std::unordered_map<ObjectPreset, ObjectDefinition>		m_ObjectDefinitions;
 
 	// Maps Shader preset into actual shader code filepath
-	std::unordered_map<ShaderPreset, ShaderPaths> m_ShaderPaths;
-	std::unordered_map<TexturePreset, std::string> m_TexturePaths;
-	std::unordered_map<Skybox, std::vector<std::string>> m_SkyboxPaths;
-	std::unordered_map<Skybox, SimpleTexture*> m_SkyboxTextures;
+	std::unordered_map<ShaderPreset, ShaderPaths>			m_ShaderPaths;
+	std::unordered_map<TexturePreset, std::string>			m_TexturePaths;
+	std::unordered_map<SkyboxPreset, std::vector<std::string>>	m_SkyboxPaths;
+	std::unordered_map<SkyboxPreset, SimpleTexture*>				m_SkyboxTextures;
 };

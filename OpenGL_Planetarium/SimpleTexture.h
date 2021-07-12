@@ -15,7 +15,7 @@ public:
 	SimpleTexture(std::string filepath);
 
 	// Skybox/cubemap constructor. TODO: Possibly create a class of its own for this? 
-	SimpleTexture(std::vector<std::string> skyboxpaths);
+	// SimpleTexture(std::vector<std::string> skyboxpaths);
 	~SimpleTexture();
 
 	SimpleTexture(const SimpleTexture& t) = delete;

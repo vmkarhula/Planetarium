@@ -28,7 +28,7 @@ RenderDataLoader::RenderDataLoader()
 	m_TexturePaths.insert({ TexturePreset::Sun, ".\\res\\img\\grayscale-sun.png" });
 	m_TexturePaths.insert({ TexturePreset::Earthlike, ".\\res\\img\\bluegreen_maze.png" });
 	
-	m_SkyboxPaths.insert({ Skybox::DefaultSpace, { 	
+	m_SkyboxPaths.insert({ SkyboxPreset::DefaultSpace, { 	
 		".\\res\\img\\sb_right.png", 
 		".\\res\\img\\sb_left.png", 
 		".\\res\\img\\sb_top.png", 
@@ -103,9 +103,9 @@ MeshDefinition RenderDataLoader::GenerateMesh(MeshPreset ps)
 	return MeshDefinition();
 }
 
-SimpleTexture* RenderDataLoader::GenerateSkybox(std::vector<std::string>paths)
+Cubemap* RenderDataLoader::GenerateSkybox(std::vector<std::string>paths)
 {
-	return new SimpleTexture(paths);	
+	return new Cubemap(paths);	
 }
 
 
@@ -136,20 +136,19 @@ RenderData RenderDataLoader::GetObjectData(ObjectPreset obsps)
 	return rd;
 }
 
-RenderData RenderDataLoader::GetObjectData(Skybox s)
+SkyboxRenderDesc RenderDataLoader::GetSkyboxDesc(SkyboxPreset s)
 {
 
 	MeshDefinition md = GetMeshDefinition(MeshPreset::Skybox);
 	SimpleShader* shader = GetShader(ShaderPreset::Skybox);
-	SimpleTexture* texture = GetSkybox(s);
+	Cubemap* texture = GetCubemap(s);
 
-	RenderData rd;
+	SkyboxRenderDesc rd;
 
 	rd.VAO = md.VAO;
 	rd.IndexCount = md.IndexCount;
-	rd.MatData.Shader = shader;
-	rd.MatData.Texture = texture;
-
+	rd.Shader = shader;
+	rd.Texture = texture;
 	return rd;
 
 }
@@ -228,7 +227,7 @@ SimpleTexture* RenderDataLoader::GetTexture(Skybox s)
 }
 */
 
-SimpleTexture* RenderDataLoader::GetSkybox(Skybox s) {
+Cubemap* RenderDataLoader::GetCubemap(SkyboxPreset s) {
 
 	auto sbSearch = m_SkyboxMap.find(s);
 

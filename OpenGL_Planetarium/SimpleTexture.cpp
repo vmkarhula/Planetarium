@@ -99,7 +99,7 @@ SimpleTexture::SimpleTexture(std::string filepath) : m_GLID(0) {
 	stbi_image_free(data);
 
 }
-
+/*
 SimpleTexture::SimpleTexture(std::vector<std::string> skyboxpaths)
 {
 
@@ -135,6 +135,8 @@ SimpleTexture::SimpleTexture(std::vector<std::string> skyboxpaths)
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
+*/
+
 SimpleTexture::~SimpleTexture()
 {
 	glDeleteTextures(1, &m_GLID);

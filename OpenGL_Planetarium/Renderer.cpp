@@ -69,7 +69,9 @@ Renderer::Renderer() :
 
 	m_ScreenQuadVAO = rd.VAO;
 
-	m_Skybox = m_DataLoader->GetObjectData(Skybox::DefaultSpace);
+	m_Skybox = m_DataLoader->GetSkyboxDesc(SkyboxPreset::DefaultSpace);
+
+	//m_SkyboxTexture = m_DataLoader->GetObjectData(SkyboxPreset::DefaultSpace);
 }
 
 Renderer::~Renderer()
@@ -95,9 +97,10 @@ unsigned int Renderer::GetRenderTag(ObjectPreset ps) {
 
 }
 
-void Renderer::UseSkybox(Skybox sb)
+void Renderer::UseSkybox(SkyboxPreset sb)
 {
-	m_Skybox = m_DataLoader->GetObjectData(sb);
+	//m_SkyboxTexture = m_DataLoader->GetObjectData(sb);
+	m_Skybox = m_DataLoader->GetSkyboxDesc(sb);
 }
 
 void Renderer::BeginFrame()
@@ -231,12 +234,20 @@ void Renderer::DrawSkybox()
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	glBindVertexArray(m_Skybox.VAO);
-	m_Skybox.MatData.Shader->Bind();
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_Skybox.MatData.Texture->ID());
+	
+	
+	//m_SkyboxTexture.MatData.Shader->Bind();
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, m_));
 	glActiveTexture(GL_TEXTURE0);
+	m_Skybox.Texture->Bind();
 
-	m_Skybox.MatData.Shader->SetUniformMat4("projection", m_Projection);
-	m_Skybox.MatData.Shader->SetUniformMat4("view", glm::mat4(glm::mat3(m_View)));
+	m_Skybox.Shader->Bind();
+
+	m_Skybox.Shader->SetUniformMat4("projection", m_Projection);
+	m_Skybox.Shader->SetUniformMat4("view", glm::mat4(glm::mat3(m_View)));
+	
+	//m_SkyboxTexture.MatData.Shader->SetUniformMat4("projection", m_Projection);
+	//m_SkyboxTexture.MatData.Shader->SetUniformMat4("view", glm::mat4(glm::mat3(m_View)));
 
 	glDrawArrays(GL_TRIANGLES, 0, m_Skybox.IndexCount);
 	
