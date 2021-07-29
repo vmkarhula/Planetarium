@@ -100,7 +100,7 @@ private:
 	void DrawRenderRequest(const RenderRequest& rr);
 
 	// Helper to generate the needed framebuffers inside the class
-	void PrepareFramebuffers();
+	void PrepareFramebuffers(bool HDR = false);
 
 	// 
 	void DrawSkybox();
@@ -148,6 +148,10 @@ private:
 	SkyboxRenderDesc m_Skybox;
 
 	Cubemap*		m_SkyboxTexture;
-	SimpleShader*	m_SkyboxShader; 
+	SimpleShader*	m_SkyboxShader;
+
+	GLuint			m_HDR_ScreenQuadTexture;
+	GLuint			m_HDR_Framebuffer;
+	bool			m_HDR;
 
 };

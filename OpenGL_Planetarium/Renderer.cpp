@@ -21,15 +21,18 @@ Renderer::Renderer() :
 	m_CameraPos(0.0f, 0.0f, 0.0f),
 	m_CameraUp(0.0f, 1.0f, 0.0f),
 	m_Fov(70.0f),
-	m_AspectRatio(16.0 / 9.0),
 	m_Projection(),
-	m_TagIndex(0),
 	m_View(),
+	m_ViewProj(),
+	m_AspectRatio(16.0 / 9.0),
 	m_BasicShader(nullptr),
-	m_DummyTexture(nullptr),
 	m_ScreenQuadShader(nullptr),
+	m_DummyTexture(nullptr),
 	m_ScreenQuadVAO(0),
-	m_ViewProj()
+	m_TagIndex(0),
+	m_HDR_ScreenQuadTexture(0),
+	m_HDR_Framebuffer(0),
+	m_HDR(true)
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -63,7 +66,7 @@ Renderer::Renderer() :
 
 	m_ScreenQuadShader = new SimpleShader(".\\shaders\\texture2screen.vs.glsl", ".\\shaders\\texture2screen.fs.glsl");
 
-	PrepareFramebuffers();
+	PrepareFramebuffers(m_HDR);
 
 	RenderData rd = m_DataLoader->GetScreenQuad();
 
@@ -135,7 +138,13 @@ void Renderer::AddLightSource(LightInfo li)
 void Renderer::RenderFrame()
 {
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
+	if (m_HDR)
+		glBindFramebuffer(GL_FRAMEBUFFER, m_HDR_Framebuffer);
+
+	else
+		glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
+
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	
@@ -160,7 +169,14 @@ void Renderer::RenderFrame()
 	m_ScreenQuadShader->Bind();
 	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_ScreenQuadTexture);
+	
+	if (m_HDR)
+		glBindTexture(GL_TEXTURE_2D, m_HDR_ScreenQuadTexture);
+
+	else
+		glBindTexture(GL_TEXTURE_2D, m_ScreenQuadTexture);
+	
+
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -197,7 +213,7 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 
 }
 
-void Renderer::PrepareFramebuffers()
+void Renderer::PrepareFramebuffers(bool HDR)
 {
 	glGenFramebuffers(1, &m_Framebuffer);
 
@@ -226,6 +242,37 @@ void Renderer::PrepareFramebuffers()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	if (HDR) {
+
+		glGenFramebuffers(1, &m_HDR_Framebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_HDR_Framebuffer);
+
+		glGenTextures(1, &m_HDR_ScreenQuadTexture);
+		glBindTexture(GL_TEXTURE_2D, m_HDR_ScreenQuadTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_ScreenWidth, m_ScreenHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_HDR_ScreenQuadTexture, 0);
+
+
+		GLuint HDR_Depth;
+		
+		glGenRenderbuffers(1, &HDR_Depth);
+		glBindRenderbuffer(GL_RENDERBUFFER, HDR_Depth);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_ScreenWidth, m_ScreenHeight);
+
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, HDR_Depth);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	}
+
 }
 
 void Renderer::DrawSkybox()
@@ -234,10 +281,7 @@ void Renderer::DrawSkybox()
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	glBindVertexArray(m_Skybox.VAO);
-	
-	
-	//m_SkyboxTexture.MatData.Shader->Bind();
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, m_));
+		
 	glActiveTexture(GL_TEXTURE0);
 	m_Skybox.Texture->Bind();
 
@@ -245,15 +289,12 @@ void Renderer::DrawSkybox()
 
 	m_Skybox.Shader->SetUniformMat4("projection", m_Projection);
 	m_Skybox.Shader->SetUniformMat4("view", glm::mat4(glm::mat3(m_View)));
-	
-	//m_SkyboxTexture.MatData.Shader->SetUniformMat4("projection", m_Projection);
-	//m_SkyboxTexture.MatData.Shader->SetUniformMat4("view", glm::mat4(glm::mat3(m_View)));
-
+		
 	glDrawArrays(GL_TRIANGLES, 0, m_Skybox.IndexCount);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
-	glBindTexture(GL_TEXTURE0, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);

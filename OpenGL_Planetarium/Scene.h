@@ -16,20 +16,7 @@
 	Once per frame it fills the renderqueue that'll then get renderered by the
 	renderer 
 */
-/*
-struct SceneNode {
 
-	SceneNode(glm::vec3 position_, float scale_, unsigned int rendertag_):
-		position(position_), rotation(0.0), scale(scale_), RenderTag(rendertag_){}
-
-	glm::vec3 position;
-	glm::vec3 rotation;
-	float scale;
-
-	unsigned int RenderTag; 
-
-};
-*/
 class Scene {
 
 public: 
