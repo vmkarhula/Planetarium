@@ -6,7 +6,6 @@
 #include "DearIMGui/imgui.h"
 #include "DearIMGui/imgui_impl_glfw.h"
 #include "DearIMGui/imgui_impl_opengl3.h"
-//using RenderDataLoader::RenderData;
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tinyobjloader/tiny_obj_loader.h"
@@ -32,7 +31,9 @@ Renderer::Renderer() :
 	m_TagIndex(0),
 	m_HDR_ScreenQuadTexture(0),
 	m_HDR_Framebuffer(0),
-	m_HDR(true)
+	m_Tonemapper(nullptr),
+	m_HDR(true),
+	m_Imgui_ShowRenderOptions(true)
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -55,13 +56,12 @@ Renderer::Renderer() :
 
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
-
+	
 	glClearColor(0.025f, 0.025f, 0.10f, 1.0f);
 	
 	m_DataLoader = new  RenderDataLoader();
 
 	m_BasicShader = new SimpleShader(".\\shaders\\basic.vs.glsl", ".\\shaders\\basic.fs.glsl");
-	//m_BasicTexture = new SimpleTexture(".\\res\\img\\perlin_sand.png");
 	m_DummyTexture = new SimpleTexture(SimpleTexture::Preset::DUMMY_WHITE);
 
 	m_ScreenQuadShader = new SimpleShader(".\\shaders\\texture2screen.vs.glsl", ".\\shaders\\texture2screen.fs.glsl");
@@ -74,7 +74,9 @@ Renderer::Renderer() :
 
 	m_Skybox = m_DataLoader->GetSkyboxDesc(SkyboxPreset::DefaultSpace);
 
-	//m_SkyboxTexture = m_DataLoader->GetObjectData(SkyboxPreset::DefaultSpace);
+
+	//m_Tonemapper = new SimpleShader(".\\shaders\\tonemapping.vs.glsl", ".\\shaders\\tonemapping.fs.glsl");
+	m_Tonemapper = new SimpleShader(".\\shaders\\texture2screen.vs.glsl", ".\\shaders\\tonemapping.fs.glsl");
 }
 
 Renderer::~Renderer()
@@ -102,7 +104,6 @@ unsigned int Renderer::GetRenderTag(ObjectPreset ps) {
 
 void Renderer::UseSkybox(SkyboxPreset sb)
 {
-	//m_SkyboxTexture = m_DataLoader->GetObjectData(sb);
 	m_Skybox = m_DataLoader->GetSkyboxDesc(sb);
 }
 
@@ -138,22 +139,20 @@ void Renderer::AddLightSource(LightInfo li)
 void Renderer::RenderFrame()
 {
 	
+	
 	if (m_HDR)
 		glBindFramebuffer(GL_FRAMEBUFFER, m_HDR_Framebuffer);
 
 	else
 		glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
 
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
 	
-	m_View = glm::lookAt(m_CameraPos, glm::vec3(0.0f, 0.0f, 0.0f), m_CameraUp);
-	//glm::mat4 model = glm::rotate(glm::mat4(1.0f))
+	IMGuiMenuSetup();
 
+	m_View = glm::lookAt(m_CameraPos, glm::vec3(0.0f, 0.0f, 0.0f), m_CameraUp);
 	m_ViewProj = m_Projection * m_View * glm::mat4(1.0);
 	
-
 	for (const RenderRequest& rr : m_RenderQueue) {
 		
 		DrawRenderRequest(rr);
@@ -161,22 +160,28 @@ void Renderer::RenderFrame()
 	
 	DrawSkybox();
 
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glBindVertexArray(m_ScreenQuadVAO);
-	m_ScreenQuadShader->Bind();
 	
-	glActiveTexture(GL_TEXTURE0);
-	
-	if (m_HDR)
+	if (m_HDR){
+		
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_HDR_ScreenQuadTexture);
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindVertexArray(m_ScreenQuadVAO);
+		m_Tonemapper->Bind();
+		m_Tonemapper->SetUniformFloat("exposure", 1.0f);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 
 	else
 		glBindTexture(GL_TEXTURE_2D, m_ScreenQuadTexture);
 	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	glBindVertexArray(m_ScreenQuadVAO);
+	m_ScreenQuadShader->Bind();
+
+	glActiveTexture(GL_TEXTURE0);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -257,14 +262,14 @@ void Renderer::PrepareFramebuffers(bool HDR)
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_HDR_ScreenQuadTexture, 0);
 
 
-		GLuint HDR_Depth;
+		GLuint HDR_DepthStencil;
 		
-		glGenRenderbuffers(1, &HDR_Depth);
-		glBindRenderbuffer(GL_RENDERBUFFER, HDR_Depth);
+		glGenRenderbuffers(1, &HDR_DepthStencil);
+		glBindRenderbuffer(GL_RENDERBUFFER, HDR_DepthStencil);
 
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_ScreenWidth, m_ScreenHeight);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_ScreenWidth, m_ScreenHeight);
 
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, HDR_Depth);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, HDR_DepthStencil);
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -298,4 +303,15 @@ void Renderer::DrawSkybox()
 
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
+}
+
+void Renderer::IMGuiMenuSetup()
+{
+	ImGui::Begin("Render Options", &m_Imgui_ShowRenderOptions);
+	
+	ImGui::Checkbox("HDR Rendering", &m_HDR);
+		
+
+	ImGui::End();
+
 }

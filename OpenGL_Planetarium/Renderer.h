@@ -105,6 +105,8 @@ private:
 	// 
 	void DrawSkybox();
 
+	//
+	void IMGuiMenuSetup();
 
 private:
 	
@@ -152,6 +154,9 @@ private:
 
 	GLuint			m_HDR_ScreenQuadTexture;
 	GLuint			m_HDR_Framebuffer;
+	SimpleShader*	m_Tonemapper;
+	
+	bool			m_Imgui_ShowRenderOptions;
 	bool			m_HDR;
 
 };

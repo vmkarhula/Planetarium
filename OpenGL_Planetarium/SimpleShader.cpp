@@ -133,6 +133,39 @@ void SimpleShader::SetUniformMat4(std::string uniformName, glm::mat4 val)
 	glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(val));
 }
 
+void SimpleShader::SetUniformFloat(std::string uniformName, glm::float32 val)
+{
+	auto locationQuery = m_UniformCache.find(uniformName);
+	GLuint uniformLoc;
+
+	// If the uniform location isn't in the cache yet
+	if (locationQuery == m_UniformCache.end()) {
+
+		GLint query = glGetUniformLocation(m_GLID, uniformName.c_str());
+
+		if (query == -1) {
+
+			std::cerr << "Error, queried uniform: " << "\"" << uniformName << "\"" << " not found!" << std::endl;
+			return;
+		}
+
+		else {
+
+			// Found the location, update cache
+			uniformLoc = static_cast<GLuint>(query);
+			m_UniformCache[uniformName] = uniformLoc;
+		}
+
+	}
+
+	else {
+
+		uniformLoc = locationQuery->second;
+	}
+
+	glUniform1f(uniformLoc, val);
+}
+
 // Error check based of OpenGL cookbook by David Wolff
 void SimpleShader::CheckCompileErrors(GLuint shader, std::string type)
 {

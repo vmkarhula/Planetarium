@@ -26,6 +26,7 @@ public:
 	void Bind() { glUseProgram(m_GLID); }
 	
 	void SetUniformMat4(std::string uniformName, glm::mat4 val);
+	void SetUniformFloat(std::string uniformName, glm::float32 val);
 
 private:
 
