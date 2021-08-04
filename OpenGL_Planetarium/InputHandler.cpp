@@ -1,5 +1,7 @@
 #include "InputHandler.h"
 
+#include "DearIMGui/imgui.h"
+
 #include <iostream>
 
 InputHandler::InputHandler(EventQueue* eq) :
@@ -32,34 +34,38 @@ void InputHandler::RegisterKeypress(GLFWwindow* window, int key, int scancode, i
 
 void InputHandler::RegisterMouseClick(GLFWwindow* window, int button, int action, int mods)
 {
-	switch (button) {
+	ImGuiIO& io = ImGui::GetIO();
 
-	case GLFW_MOUSE_BUTTON_LEFT: {
-
-		if(action == GLFW_PRESS){
-
-		m_Mouse1_Down = true;
+	if(!io.WantCaptureMouse){
 		
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
+		switch (button) {
 
-		m_PrevMousePos = glm::vec2(xpos, ypos);
+		case GLFW_MOUSE_BUTTON_LEFT: {
 
+			if(action == GLFW_PRESS){
+
+			m_Mouse1_Down = true;
+		
+			double xpos, ypos;
+			glfwGetCursorPos(window, &xpos, &ypos);
+
+			m_PrevMousePos = glm::vec2(xpos, ypos);
+
+			}
+			else if (action == GLFW_RELEASE) {
+
+				m_Mouse1_Down = false;
+
+			}
+
+		} break;
+
+		default: {
+
+			std::cout << "Unrecognized mouse button! \n";
+
+			}
 		}
-		else if (action == GLFW_RELEASE) {
-
-			m_Mouse1_Down = false;
-
-		}
-
-	} break;
-
-	default: {
-
-		std::cout << "Unrecognized mouse button! \n";
-
-	}
-
 	}
 }
 

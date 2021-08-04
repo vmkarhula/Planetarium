@@ -1,11 +1,13 @@
 #include "Scene.h"
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "DearIMGui/imgui.h"
 
 Scene::Scene() {}
 Scene::Scene(Preset ps, Renderer* renderer) : 
 	m_DummyRotation(0.0f), 
-	m_SunDescription({})
+	m_SunDescription({}),
+	m_DrawImguiLayer(true)
 {
 	switch (ps) {
 
@@ -41,6 +43,9 @@ void Scene::Update(float dt, EventQueue* eq)
 			ProcessEvent(eq->Pop());
 
 	}
+
+	DrawImguiLayer();
+
 }
 
 void Scene::GetRenderRequests(Renderer* renderer)
@@ -70,4 +75,11 @@ void Scene::ProcessEvent(Event e)
 	} break;
 
 	}
+}
+
+void Scene::DrawImguiLayer()
+{
+	ImGui::Begin("Scene Options", &m_DrawImguiLayer);
+	ImGui::End();
+
 }

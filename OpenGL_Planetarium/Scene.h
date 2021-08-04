@@ -44,6 +44,7 @@ public:
 private:
 
 	void ProcessEvent(Event e);
+	void DrawImguiLayer();
 
 private:
 
@@ -53,4 +54,6 @@ private:
 	LightInfo					m_SunDescription;
 	
 	std::unique_ptr<SceneNode>	m_BaseNode;
+
+	bool						m_DrawImguiLayer;
 };
