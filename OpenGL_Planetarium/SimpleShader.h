@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "Renderer.h"
 
 #include "glad/glad.h"
 #include "glm/glm.hpp"
@@ -27,6 +28,8 @@ public:
 	
 	void SetUniformMat4(std::string uniformName, glm::mat4 val);
 	void SetUniformFloat(std::string uniformName, glm::float32 val);
+
+	void SetLightParameter(std::string uniformName, LightInfo val);
 
 private:
 

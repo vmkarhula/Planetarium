@@ -80,6 +80,9 @@ void Scene::ProcessEvent(Event e)
 void Scene::DrawImguiLayer()
 {
 	ImGui::Begin("Scene Options", &m_DrawImguiLayer);
+	
+	ImGui::SliderFloat3("Sun Color", (float*)&m_SunDescription.Diffuse, 0.0f, 1.0f);
+
 	ImGui::End();
 
 }

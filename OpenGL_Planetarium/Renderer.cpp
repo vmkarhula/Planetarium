@@ -139,7 +139,7 @@ void Renderer::AddLightSource(LightInfo li)
 void Renderer::RenderFrame()
 {
 	
-	
+	// The lighting usually requires fine tuning between HDR/non-HDR solutions. Maybe simply force HDR?
 	if (m_HDR)
 		glBindFramebuffer(GL_FRAMEBUFFER, m_HDR_Framebuffer);
 
@@ -213,6 +213,7 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 	rd.MatData.Shader->Bind();
 	rd.MatData.Shader->SetUniformMat4("viewproj", m_ViewProj);
 	rd.MatData.Shader->SetUniformMat4("model", modelMtx);
+	rd.MatData.Shader->Set("sun", m_LightSources[0]);
 
 	glDrawElements(GL_TRIANGLES, rd.IndexCount, GL_UNSIGNED_INT, 0);
 
@@ -220,6 +221,8 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 
 void Renderer::PrepareFramebuffers(bool HDR)
 {
+	
+	// Non-HDR framebuffer
 	glGenFramebuffers(1, &m_Framebuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
@@ -246,7 +249,7 @@ void Renderer::PrepareFramebuffers(bool HDR)
 		std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+ 
 	if (HDR) {
 
 		glGenFramebuffers(1, &m_HDR_Framebuffer);
