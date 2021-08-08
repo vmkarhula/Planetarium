@@ -49,8 +49,6 @@ private:
 private:
 
 	Camera						m_Camera;
-	std::vector<SceneNode>		m_Objects;
-	float						m_DummyRotation;
 	LightInfo					m_SunDescription;
 	
 	std::unique_ptr<SceneNode>	m_BaseNode;

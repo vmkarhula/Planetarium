@@ -11,11 +11,12 @@ public:
 
 	enum class Preset{DUMMY_WHITE};
 	
+	// For code generated textures and such
 	SimpleTexture(Preset ps);
-	SimpleTexture(std::string filepath);
 
-	// Skybox/cubemap constructor. TODO: Possibly create a class of its own for this? 
-	// SimpleTexture(std::vector<std::string> skyboxpaths);
+	// For textures loaded from file
+	SimpleTexture(std::string filepath);
+		
 	~SimpleTexture();
 
 	SimpleTexture(const SimpleTexture& t) = delete;
@@ -25,10 +26,10 @@ public:
 
 	void Bind();
 	GLuint ID() { return m_GLID; }
-
+	
 private:
 
 	GLuint m_GLID; 
-
+	
 
 };

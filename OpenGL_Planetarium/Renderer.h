@@ -44,12 +44,13 @@ struct RenderRequest {
 };
 
 
+// Lightinfo uses vec4s instead of vec3s as they're less problematic with GLSL memory layout
 struct LightInfo {
 
-	glm::vec3 Position;
-	glm::vec3 Ambient;
-	glm::vec3 Diffuse;
-	glm::vec3 Specular; 
+	glm::vec4 Position;
+	glm::vec4 Ambient;
+	glm::vec4 Diffuse;
+	glm::vec4 Specular; 
 
 };
 
@@ -84,12 +85,12 @@ public:
 	void SetCamera(glm::vec3 position, glm::vec3 up, GLuint cameraID = 0);
 
 	void AddToRenderQueue(const RenderRequest& rr);
-	void AddLightSource(LightInfo li);
+	void DefineSunlight(LightInfo li);
 	void RenderFrame();
 
 
 private:
-	
+		
 	// Maps presets into rendertags
 	using TagMap = std::unordered_map<ObjectPreset, unsigned int>;
 
@@ -101,6 +102,14 @@ private:
 
 	// Helper to generate the needed framebuffers inside the class
 	void PrepareFramebuffers(bool HDR = false);
+
+	// Helper to generate the common uniformbuffers
+	void PrepareUniformbuffers();
+
+	// Updates the uniformbuffers with current data. Should be called after receiving the current scene information. 
+	void UpdateUniformbuffers();
+
+	//void BindUniformblock(SimpleShader* shader, UniformBlock block);
 
 	// 
 	void DrawSkybox();
@@ -156,7 +165,14 @@ private:
 	GLuint			m_HDR_Framebuffer;
 	SimpleShader*	m_Tonemapper;
 	
-	bool			m_Imgui_ShowRenderOptions;
+	GLuint			m_UBMatrices;
+	GLuint			m_UBSunlight;
+	GLuint			m_UBBinding_Matrices;
+	GLuint			m_UBBinding_SunlightDesc; 
+
+	LightInfo		m_SunlightDesc;
+
 	bool			m_HDR;
+	bool			m_Imgui_ShowRenderOptions;
 
 };

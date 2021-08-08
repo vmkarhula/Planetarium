@@ -32,6 +32,10 @@ Renderer::Renderer() :
 	m_HDR_ScreenQuadTexture(0),
 	m_HDR_Framebuffer(0),
 	m_Tonemapper(nullptr),
+	m_UBMatrices(0),
+	m_UBSunlight(0),
+	m_UBBinding_Matrices(0),
+	m_UBBinding_SunlightDesc(0),
 	m_HDR(true),
 	m_Imgui_ShowRenderOptions(true)
 {
@@ -67,6 +71,7 @@ Renderer::Renderer() :
 	m_ScreenQuadShader = new SimpleShader(".\\shaders\\texture2screen.vs.glsl", ".\\shaders\\texture2screen.fs.glsl");
 
 	PrepareFramebuffers(m_HDR);
+	PrepareUniformbuffers();
 
 	RenderData rd = m_DataLoader->GetScreenQuad();
 
@@ -74,8 +79,6 @@ Renderer::Renderer() :
 
 	m_Skybox = m_DataLoader->GetSkyboxDesc(SkyboxPreset::DefaultSpace);
 
-
-	//m_Tonemapper = new SimpleShader(".\\shaders\\tonemapping.vs.glsl", ".\\shaders\\tonemapping.fs.glsl");
 	m_Tonemapper = new SimpleShader(".\\shaders\\texture2screen.vs.glsl", ".\\shaders\\tonemapping.fs.glsl");
 }
 
@@ -131,9 +134,9 @@ void Renderer::AddToRenderQueue(const RenderRequest& rc) {
 
 }
 
-void Renderer::AddLightSource(LightInfo li)
+void Renderer::DefineSunlight(LightInfo li)
 {
-	m_LightSources.push_back(li);
+	m_SunlightDesc = li;
 }
 
 void Renderer::RenderFrame()
@@ -153,6 +156,8 @@ void Renderer::RenderFrame()
 	m_View = glm::lookAt(m_CameraPos, glm::vec3(0.0f, 0.0f, 0.0f), m_CameraUp);
 	m_ViewProj = m_Projection * m_View * glm::mat4(1.0);
 	
+	UpdateUniformbuffers();
+
 	for (const RenderRequest& rr : m_RenderQueue) {
 		
 		DrawRenderRequest(rr);
@@ -211,9 +216,12 @@ void Renderer::DrawRenderRequest(const RenderRequest& rr)
 	
 	glBindVertexArray(rd.VAO);
 	rd.MatData.Shader->Bind();
-	rd.MatData.Shader->SetUniformMat4("viewproj", m_ViewProj);
+	//rd.MatData.Shader->SetUniformMat4("viewproj", m_ViewProj);
 	rd.MatData.Shader->SetUniformMat4("model", modelMtx);
-	rd.MatData.Shader->Set("sun", m_LightSources[0]);
+
+	//LightInfo li = m_LightSources[0];
+
+	//rd.MatData.Shader->SetLightParameter("sun", li);
 
 	glDrawElements(GL_TRIANGLES, rd.IndexCount, GL_UNSIGNED_INT, 0);
 
@@ -249,7 +257,8 @@ void Renderer::PrepareFramebuffers(bool HDR)
 		std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
- 
+	
+	// Setup for HDR framebuffer
 	if (HDR) {
 
 		glGenFramebuffers(1, &m_HDR_Framebuffer);
@@ -283,6 +292,92 @@ void Renderer::PrepareFramebuffers(bool HDR)
 
 }
 
+void Renderer::PrepareUniformbuffers()
+{
+	// The uniform buffer for view & projection matrixes
+	m_UBBinding_Matrices = 0;
+	
+	glGenBuffers(1, &m_UBMatrices);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+	
+	glBindBufferBase(GL_UNIFORM_BUFFER, m_UBBinding_Matrices, m_UBMatrices);
+	
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+
+
+
+	// The uniform buffer for sunlight
+	m_UBBinding_SunlightDesc = 1;
+	
+	glGenBuffers(1, &m_UBSunlight);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBSunlight);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightInfo), nullptr, GL_STATIC_DRAW);
+	
+	glBindBufferBase(GL_UNIFORM_BUFFER, m_UBBinding_SunlightDesc, m_UBSunlight);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+
+}
+
+void Renderer::UpdateUniformbuffers()
+{
+	// The view & projection matrixes
+	struct MatrixBlock {
+
+		glm::mat4 view;
+		glm::mat4 projection;
+	};
+
+	MatrixBlock mb;
+	mb.view = m_View;
+	mb.projection = m_Projection;
+
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(MatrixBlock), &mb);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	// Sunlight Desc
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBSunlight);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightInfo), &m_SunlightDesc);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+/*
+void Renderer::BindUniformblock(SimpleShader* shader, UniformBlock block)
+{
+	GLuint ublockBindingSlot;
+	std::string shaderblockName;
+
+	switch (block)
+	{
+	case UniformBlock::SCENE_MATRICES: {
+		
+		shaderblockName = "ViewProj_Matrices";
+		ublockBindingSlot = m_UBBinding_Matrices;
+
+	} break;
+	case UniformBlock::SUNLIGHT: {
+
+		shaderblockName = "SunlightDesc";
+		ublockBindingSlot = m_UBBinding_SunlightDesc;
+	}
+	break;
+	default: {
+
+		std::cerr << "ERROR, UNRECOGNIZED UNIFORM BLOCK! \n";
+		return;
+	}	break;
+	}
+
+	GLuint shaderblockHandle = glGetUniformBlockIndex(shader->ID(), shaderblockName.c_str());
+	glUniformBlockBinding(shader->ID(), shaderblockHandle, ublockBindingSlot);
+
+}
+*/
 void Renderer::DrawSkybox()
 {
 	

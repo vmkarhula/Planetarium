@@ -14,3 +14,5 @@ enum class MaterialPreset { ERROR = 0, Sun, Sand };
 enum class ShaderPreset { ERROR = 0, Sun, SingleColor, VertexColor, PositionColor, VertexUV, Textured, Skybox };
 enum class TexturePreset { ERROR = 0, Sun, Sand, Earthlike };
 enum class SkyboxPreset { ERROR = 0, DefaultSpace };
+
+enum class UniformBlock { SCENE_MATRICES, SUNLIGHT };

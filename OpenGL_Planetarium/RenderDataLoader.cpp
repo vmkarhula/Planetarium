@@ -7,21 +7,17 @@
 #include "SimpleTexture.h"
 
 
-RenderDataLoader::RenderDataLoader()
+RenderDataLoader::RenderDataLoader():
+	m_ScreenQuadRD({})
 {	
-	//m_ObjectDefinitions.insert({ ObjectPreset::BasicCube, {MeshPreset::BasicCube, ShaderPreset::SingleColor} });
-	//m_ObjectDefinitions.insert({ ObjectPreset::ColoredCube, {MeshPreset::ColoredCube, ShaderPreset::VertexColor} });
-	//m_ObjectDefinitions.insert({ ObjectPreset::BasicSphere, {MeshPreset::BasicSphere, ShaderPreset::SingleColor} });
-	//m_ObjectDefinitions.insert({ ObjectPreset::ColorSphere, {MeshPreset::BasicSphere, ShaderPreset::PositionColor} });
+
 	m_ObjectDefinitions.insert({ ObjectPreset::SandPlanet, {MeshPreset::TexturedPlanet, ShaderPreset::Textured, TexturePreset::Sand} });
 	m_ObjectDefinitions.insert({ ObjectPreset::Sun, {MeshPreset::Sun, ShaderPreset::Sun, TexturePreset::Sun} });
 	m_ObjectDefinitions.insert({ ObjectPreset::EarthlikePlanet, {MeshPreset::TexturedPlanet, ShaderPreset::Textured, TexturePreset::Earthlike} });
 		
-	m_ShaderPaths.insert({ ShaderPreset::SingleColor , ShaderPaths(".\\shaders\\basic.vs.glsl", ".\\shaders\\basic.fs.glsl") });
-	m_ShaderPaths.insert({ ShaderPreset::VertexColor , ShaderPaths(".\\shaders\\colorvertex.vs.glsl", ".\\shaders\\colorvertex.fs.glsl") });
-	m_ShaderPaths.insert({ ShaderPreset::PositionColor, ShaderPaths(".\\shaders\\positioncolor.vs.glsl", ".\\shaders\\colorvertex.fs.glsl") });
 	m_ShaderPaths.insert({ ShaderPreset::Textured, ShaderPaths(".\\shaders\\textured.vs.glsl", ".\\shaders\\textured.fs.glsl") });
 	m_ShaderPaths.insert({ ShaderPreset::Sun, ShaderPaths(".\\shaders\\sun.vs.glsl", ".\\shaders\\sun.fs.glsl") });
+	
 	m_ShaderPaths.insert({ ShaderPreset::Skybox, ShaderPaths(".\\shaders\\skybox.vs.glsl", ".\\shaders\\skybox.fs.glsl") });
 
 	m_TexturePaths.insert({ TexturePreset::Sand, ".\\res\\img\\perlin_sand.png" });
@@ -35,6 +31,8 @@ RenderDataLoader::RenderDataLoader()
 		".\\res\\img\\sb_bottom.png",
 		".\\res\\img\\sb_front.png",
 		".\\res\\img\\sb_back.png"} });
+
+
 }	
 
 MeshDefinition RenderDataLoader::GetMeshDefinition(MeshPreset ps) {

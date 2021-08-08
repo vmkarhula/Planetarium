@@ -117,10 +117,7 @@ private:
 	
 	SimpleTexture* GetTexture(TexturePreset textureps);
 	Cubemap* GetCubemap(SkyboxPreset s);
-	//SimpleTexture* GetTexture(Skybox s);
-	
-
-	
+		
 	// Searches already existing meshes, calls for generatemesh if needed mesh isn't available yet
 	MeshDefinition GetMeshDefinition(MeshPreset ps);
 	
@@ -137,6 +134,9 @@ private:
 	MeshMap			m_MeshMap;
 	TextureMap		m_TextureMap;
 	std::unordered_map < SkyboxPreset, Cubemap*> m_SkyboxMap;
+	
+	// Contains information on which uniformblocks shaders should be bound
+	std::unordered_map < ShaderPreset, std::vector<UniformBlock>> m_ShaderBindings;
 
 	RenderData		m_ScreenQuadRD; 
 

@@ -6,10 +6,10 @@ in vec2 voutUV;
 
 struct LightInfo{
 
-    vec3 l_pos;
-    vec3 l_ambient;
-    vec3 l_diffuse;
-    vec3 l_specular;
+    vec4 l_pos;
+    vec4 l_ambient;
+    vec4 l_diffuse;
+    vec4 l_specular;
 
 };
 

@@ -166,11 +166,11 @@ void SimpleShader::SetUniformFloat(std::string uniformName, glm::float32 val)
 	glUniform1f(uniformLoc, val);
 }
 
-void SimpleShader::SetLightParameter(std::string uniformName, LightInfo val)
+/*void SimpleShader::SetLightParameter(std::string uniformName, LightInfo val)
 {
 	
 }
-
+*/
 // Error check based of OpenGL cookbook by David Wolff
 void SimpleShader::CheckCompileErrors(GLuint shader, std::string type)
 {

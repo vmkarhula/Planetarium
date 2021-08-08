@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include "Renderer.h"
+#include "RenderPresets.h"
 
 #include "glad/glad.h"
 #include "glm/glm.hpp"
@@ -23,13 +24,12 @@ public:
 	SimpleShader operator=(SimpleShader&& rhs) = delete; 
 
 
-	GLuint ID() { return m_GLID; }
+	GLuint ID() const { return m_GLID; } 
 	void Bind() { glUseProgram(m_GLID); }
 	
 	void SetUniformMat4(std::string uniformName, glm::mat4 val);
 	void SetUniformFloat(std::string uniformName, glm::float32 val);
-
-	void SetLightParameter(std::string uniformName, LightInfo val);
+		
 
 private:
 
@@ -42,4 +42,5 @@ private:
 	
 	// Cache to avoid querying OpenGL for uniform locations every frame 
 	std::unordered_map<std::string, GLuint> m_UniformCache;
+		
 };

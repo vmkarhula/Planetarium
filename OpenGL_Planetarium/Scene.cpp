@@ -5,7 +5,6 @@
 
 Scene::Scene() {}
 Scene::Scene(Preset ps, Renderer* renderer) : 
-	m_DummyRotation(0.0f), 
 	m_SunDescription({}),
 	m_DrawImguiLayer(true)
 {
@@ -22,10 +21,10 @@ Scene::Scene(Preset ps, Renderer* renderer) :
 
 		m_BaseNode->AddChild(std::unique_ptr<SceneNode>(earthlike));
 
-		m_SunDescription.Position = glm::vec3(0.0f, 0.0f, 0.0f);
-		m_SunDescription.Ambient = glm::vec3(0.2f, 0.2f, 0.2f);
-		m_SunDescription.Diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
-		m_SunDescription.Specular = glm::vec3(0.05f, 0.05f, 0.05f);
+		m_SunDescription.Position = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		m_SunDescription.Ambient = glm::vec4(0.2f, 0.2f, 0.2f, 0.0f);
+		m_SunDescription.Diffuse = glm::vec4(0.4f, 0.4f, 0.4f, 0.0f);
+		m_SunDescription.Specular = glm::vec4(0.05f, 0.05f, 0.05f, 0.0f);
 		
 	}
 }
@@ -51,7 +50,7 @@ void Scene::Update(float dt, EventQueue* eq)
 void Scene::GetRenderRequests(Renderer* renderer)
 {
 	renderer->SetCamera(m_Camera.GetPos(), m_Camera.GetUpwards());
-	renderer->AddLightSource(m_SunDescription);
+	renderer->DefineSunlight(m_SunDescription);
 
 	m_BaseNode->GetRenderRequest(renderer);
 }
