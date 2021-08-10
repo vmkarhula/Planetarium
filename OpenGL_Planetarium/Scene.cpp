@@ -6,6 +6,7 @@
 Scene::Scene() {}
 Scene::Scene(Preset ps, Renderer* renderer) : 
 	m_SunDescription({}),
+	m_SunLightIntensity(1.0f),
 	m_DrawImguiLayer(true)
 {
 	switch (ps) {
@@ -81,6 +82,7 @@ void Scene::DrawImguiLayer()
 	ImGui::Begin("Scene Options", &m_DrawImguiLayer);
 	
 	ImGui::SliderFloat3("Sun Color", (float*)&m_SunDescription.Diffuse, 0.0f, 1.0f);
+	ImGui::SliderFloat("Sunlight Intensity", &m_SunLightIntensity, 0.0f, 3.0f);
 
 	ImGui::End();
 

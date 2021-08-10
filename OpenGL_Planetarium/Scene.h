@@ -50,6 +50,7 @@ private:
 
 	Camera						m_Camera;
 	LightInfo					m_SunDescription;
+	float						m_SunLightIntensity;
 	
 	std::unique_ptr<SceneNode>	m_BaseNode;
 
